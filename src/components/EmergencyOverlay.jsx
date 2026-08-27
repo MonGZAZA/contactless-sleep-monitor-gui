@@ -267,7 +267,7 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-red-950/95 backdrop-blur-lg">
       <div className="absolute inset-0 bg-red-600/15 animate-pulse pointer-events-none" />
 
-      <div className="bg-slate-900 border-2 border-red-500 rounded-3xl w-full max-w-sm p-6 flex flex-col items-center text-center shadow-[0_0_60px_rgba(239,68,68,0.5)] relative z-10 animate-slide-up">
+      <div className="bg-slate-900 border-2 border-red-500 rounded-3xl w-full max-w-sm p-6 flex flex-col items-center text-center shadow-[0_0_60px_rgba(239,68,68,0.5)] relative z-10 animate-slide-up animate-vibrate">
         {/* Top-Right Quick Close Button */}
         <button
           onClick={handleDismiss}
@@ -300,10 +300,15 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
 
           <button
             onClick={() => {
-              setVibrating(!vibrating);
+              const nextVibe = !vibrating;
+              setVibrating(nextVibe);
               if ('vibrate' in navigator) {
                 try {
-                  navigator.vibrate(0);
+                  if (nextVibe) {
+                    navigator.vibrate([400, 200, 400, 200, 800]);
+                  } else {
+                    navigator.vibrate(0);
+                  }
                 } catch (e) {}
               }
             }}
@@ -346,6 +351,20 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
           >
             <Phone className="w-4 h-4" />
             Simulate Immediate Dispatch Call
+          </button>
+
+          <button
+            onClick={() => {
+              if ('vibrate' in navigator) {
+                try {
+                  navigator.vibrate([500, 200, 500, 200, 500, 200, 800]);
+                } catch (e) {}
+              }
+            }}
+            className="w-full bg-slate-800/80 hover:bg-slate-750 active:scale-95 text-slate-300 hover:text-white font-semibold py-2 px-3 rounded-xl border border-slate-700 flex items-center justify-center gap-1.5 text-xs transition-all"
+          >
+            <Vibrate className="w-3.5 h-3.5 text-red-400" />
+            <span>Tap to Pulse Phone Vibration (Android)</span>
           </button>
 
           <button

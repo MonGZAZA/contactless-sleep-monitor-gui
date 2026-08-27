@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Icons from 'lucide-react';
-import { X, Check, Minus, Plus, Info } from 'lucide-react';
+import { X, Check, Minus, Plus, Info, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { PARAM_CONFIG } from '../data/sleepAnalysis';
 
 function getValueStatus(key, value) {
@@ -33,6 +33,49 @@ function getValueStatus(key, value) {
   };
 }
 
+function getEmergencyThresholdInfo(paramKey, value) {
+  if (paramKey === 'heartRate') {
+    const isTriggered = value <= 28 || value >= 150;
+    const isApproaching = value <= 35 || value >= 130;
+    return {
+      hasEmergency: true,
+      isTriggered,
+      isApproaching,
+      limits: '≤28 or ≥150 bpm',
+      warningMessage: isTriggered
+        ? 'Setting Heart Rate to ≤28 or ≥150 bpm will IMMEDIATELY trigger the Critical Emergency Alarm & Auto-Dispatch countdown!'
+        : 'Warning: Approaching cardiac emergency threshold (≤28 or ≥150 bpm). Sliding further will trigger the emergency alarm.',
+    };
+  }
+  if (paramKey === 'breathingRate') {
+    const isTriggered = value <= 3;
+    const isApproaching = value <= 5;
+    return {
+      hasEmergency: true,
+      isTriggered,
+      isApproaching,
+      limits: '≤3 br/min',
+      warningMessage: isTriggered
+        ? 'Setting Breathing Rate to ≤3 br/min will IMMEDIATELY trigger the Respiratory Cessation Emergency Alarm & Auto-Dispatch countdown!'
+        : 'Warning: Approaching respiratory cessation threshold (≤3 br/min). Sliding further will trigger the emergency alarm.',
+    };
+  }
+  if (paramKey === 'ahi') {
+    const isTriggered = value > 50;
+    const isApproaching = value >= 45;
+    return {
+      hasEmergency: true,
+      isTriggered,
+      isApproaching,
+      limits: '>50 ev/hr',
+      warningMessage: isTriggered
+        ? 'Setting AHI >50 will IMMEDIATELY trigger the Severe Apnea Emergency Alarm & Auto-Dispatch countdown!'
+        : 'Warning: Approaching severe apnea emergency threshold (>50 ev/hr). Sliding further will trigger the emergency alarm.',
+    };
+  }
+  return null;
+}
+
 const statusColors = {
   good: 'text-emerald-400',
   warn: 'text-amber-400',
@@ -61,6 +104,7 @@ export default function SliderModal({ paramKey, value, onChange, onClose }) {
 
   const IconComponent = Icons[config.icon] || Icons.Activity;
   const { status, optimal } = getValueStatus(paramKey, value);
+  const emergencyInfo = getEmergencyThresholdInfo(paramKey, value);
 
   const handleStep = (direction) => {
     const step = config.step || 1;
@@ -76,7 +120,7 @@ export default function SliderModal({ paramKey, value, onChange, onClose }) {
       <div className="absolute inset-0" onClick={onClose} />
 
       {/* Modal / Bottom Sheet Box */}
-      <div className="bg-slate-900 border-t sm:border-2 border-slate-700/80 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 relative z-10 shadow-2xl animate-slide-up space-y-5">
+      <div className="bg-slate-900 border-t sm:border-2 border-slate-700/80 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 relative z-10 shadow-2xl animate-slide-up space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -95,6 +139,33 @@ export default function SliderModal({ paramKey, value, onChange, onClose }) {
             <X className="w-4 h-4" />
           </button>
         </div>
+
+        {/* Real-Time Emergency Warning Alert (Shown when entering/approaching alert limit) */}
+        {emergencyInfo && (emergencyInfo.isTriggered || emergencyInfo.isApproaching) && (
+          <div
+            className={`p-3 rounded-2xl border flex items-start gap-2.5 transition-all ${
+              emergencyInfo.isTriggered
+                ? 'bg-red-500/20 border-red-500/80 text-red-200 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.3)]'
+                : 'bg-amber-500/15 border-amber-500/50 text-amber-200'
+            }`}
+          >
+            {emergencyInfo.isTriggered ? (
+              <ShieldAlert className="w-5 h-5 text-red-400 shrink-0 mt-0.5 animate-bounce" />
+            ) : (
+              <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+            )}
+            <div className="text-xs">
+              <strong className="block font-bold mb-0.5">
+                {emergencyInfo.isTriggered
+                  ? '🚨 CRITICAL EMERGENCY LIMIT REACHED'
+                  : '⚠️ EMERGENCY LIMIT APPROACHING'}
+              </strong>
+              <p className="text-[11px] leading-snug">
+                {emergencyInfo.warningMessage}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Value Display with Minus / Plus Buttons */}
         <div className="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/60 flex items-center justify-between">
@@ -138,9 +209,14 @@ export default function SliderModal({ paramKey, value, onChange, onClose }) {
             onChange={(e) => onChange(paramKey, Number(e.target.value))}
             className="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-500"
           />
-          <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+          <div className="flex justify-between text-[10px] text-slate-400 font-mono">
             <span>Min: {config.min} {config.unit}</span>
-            {optimal && <span className="text-emerald-400 font-sans">Optimal: {optimal} {config.unit}</span>}
+            {optimal && <span className="text-emerald-400 font-sans font-semibold">Optimal: {optimal} {config.unit}</span>}
+            {emergencyInfo && (
+              <span className="text-red-400 font-sans font-bold">
+                🚨 Alarm: {emergencyInfo.limits}
+              </span>
+            )}
             <span>Max: {config.max} {config.unit}</span>
           </div>
         </div>
