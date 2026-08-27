@@ -216,6 +216,39 @@ export default function Dashboard() {
         </div>
       </section>
 
+      {/* Bedroom Climate & Environment (Moved Up to Core Monitoring) */}
+      <section>
+        <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+          <Thermometer className="w-3.5 h-3.5 text-emerald-400" />
+          Bedroom Climate & Noise
+        </h3>
+        <div
+          className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide touch-pan-x overscroll-x-contain select-none"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          <div className="flex-shrink-0 bg-slate-800/60 border border-slate-700/60 rounded-2xl p-3.5 w-28 flex flex-col items-center justify-center gap-1">
+            <Thermometer className="w-5 h-5 text-orange-400" />
+            <span className="text-base font-bold text-white tabular-nums">{liveParams.roomTemp}°C</span>
+            <span className="text-[9px] text-slate-400 uppercase font-semibold">Temp</span>
+          </div>
+          <div className="flex-shrink-0 bg-slate-800/60 border border-slate-700/60 rounded-2xl p-3.5 w-28 flex flex-col items-center justify-center gap-1">
+            <Droplets className="w-5 h-5 text-blue-400" />
+            <span className="text-base font-bold text-white tabular-nums">{liveParams.roomHumidity}%</span>
+            <span className="text-[9px] text-slate-400 uppercase font-semibold">Humidity</span>
+          </div>
+          <div className="flex-shrink-0 bg-slate-800/60 border border-slate-700/60 rounded-2xl p-3.5 w-28 flex flex-col items-center justify-center gap-1">
+            <Volume2 className="w-5 h-5 text-slate-300" />
+            <span className="text-base font-bold text-white tabular-nums">{liveParams.ambientNoise} dB</span>
+            <span className="text-[9px] text-slate-400 uppercase font-semibold">Noise</span>
+          </div>
+          <div className="flex-shrink-0 bg-slate-800/60 border border-slate-700/60 rounded-2xl p-3.5 w-28 flex flex-col items-center justify-center gap-1">
+            <Sun className="w-5 h-5 text-amber-300" />
+            <span className="text-base font-bold text-white tabular-nums">{liveParams.ambientLight} lx</span>
+            <span className="text-[9px] text-slate-400 uppercase font-semibold">Light</span>
+          </div>
+        </div>
+      </section>
+
       {/* Charts Section with Mode Switcher */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
@@ -415,39 +448,6 @@ export default function Dashboard() {
           </ul>
         </section>
       )}
-
-      {/* Room Environment Summary */}
-      <section>
-        <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-          <Thermometer className="w-3.5 h-3.5 text-emerald-400" />
-          Bedroom Climate & Noise
-        </h3>
-        <div
-          className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide touch-pan-x overscroll-x-contain select-none"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          <div className="flex-shrink-0 bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4 w-32 flex flex-col items-center justify-center gap-1.5">
-            <Thermometer className="w-5 h-5 text-orange-400" />
-            <span className="text-base font-bold text-white tabular-nums">{liveParams.roomTemp}°C</span>
-            <span className="text-[9px] text-slate-400 uppercase font-semibold">Temperature</span>
-          </div>
-          <div className="flex-shrink-0 bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4 w-32 flex flex-col items-center justify-center gap-1.5">
-            <Droplets className="w-5 h-5 text-blue-400" />
-            <span className="text-base font-bold text-white tabular-nums">{liveParams.roomHumidity}%</span>
-            <span className="text-[9px] text-slate-400 uppercase font-semibold">Humidity</span>
-          </div>
-          <div className="flex-shrink-0 bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4 w-32 flex flex-col items-center justify-center gap-1.5">
-            <Volume2 className="w-5 h-5 text-slate-300" />
-            <span className="text-base font-bold text-white tabular-nums">{liveParams.ambientNoise} dB</span>
-            <span className="text-[9px] text-slate-400 uppercase font-semibold">Noise Level</span>
-          </div>
-          <div className="flex-shrink-0 bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4 w-32 flex flex-col items-center justify-center gap-1.5">
-            <Sun className="w-5 h-5 text-amber-300" />
-            <span className="text-base font-bold text-white tabular-nums">{liveParams.ambientLight} lx</span>
-            <span className="text-[9px] text-slate-400 uppercase font-semibold">Ambient Light</span>
-          </div>
-        </div>
-      </section>
 
       {/* Clinical Disclaimer */}
       <div className="text-center pt-2">
