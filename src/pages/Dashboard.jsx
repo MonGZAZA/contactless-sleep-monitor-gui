@@ -33,6 +33,7 @@ import {
   Sparkles,
   CheckCircle2,
   AlertTriangle,
+  ClipboardList,
 } from 'lucide-react';
 
 function CustomLiveTooltip({ active, payload, label, unit, metricName }) {
@@ -125,7 +126,7 @@ export default function Dashboard() {
   const hrChartData = graphMode === 'live' ? liveHrData : sessionHrData;
   const brChartData = graphMode === 'live' ? liveBrData : sessionBrData;
 
-  // Only strictly abnormal conditions (critical, high, or moderate risk)
+  // Filter strictly abnormal conditions (critical, high, or moderate risk)
   const abnormalConditions = (analysis?.conditions || []).filter(
     (c) => c.risk === 'critical' || c.risk === 'high' || c.risk === 'moderate'
   );
@@ -154,13 +155,18 @@ export default function Dashboard() {
         </p>
       </section>
 
-      {/* ONLY SHOWN IF ABNORMAL: Detected Conditions & Clinical Risks */}
+      {/* TOP SECTION: If there are ABNORMAL conditions, promote them immediately UP here */}
       {abnormalConditions.length > 0 && (
         <section className="space-y-3 animate-fade-in">
-          <h3 className="text-xs font-bold text-red-300 uppercase tracking-wider flex items-center gap-1.5">
-            <AlertTriangle className="w-4 h-4 text-red-400 animate-pulse" />
-            Detected Health Conditions & Clinical Risks
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold text-red-300 uppercase tracking-wider flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 text-red-400 animate-pulse" />
+              Priority Alerts: Abnormal Conditions Detected
+            </h3>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">
+              {abnormalConditions.length} Issue{abnormalConditions.length > 1 ? 's' : ''}
+            </span>
+          </div>
 
           <div className="space-y-2.5">
             {abnormalConditions
@@ -172,24 +178,24 @@ export default function Dashboard() {
                 <RiskAlert key={condition.id} condition={condition} />
               ))}
           </div>
-        </section>
-      )}
 
-      {/* ONLY SHOWN IF ABNORMAL: Actionable Clinical Recommendations for Detected Issues */}
-      {abnormalConditions.length > 0 && analysis?.tips && analysis.tips.length > 0 && (
-        <section className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-slate-900 border border-amber-500/30 rounded-2xl p-4 space-y-2.5 shadow-md animate-fade-in">
-          <h3 className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
-            <Zap className="w-4 h-4 text-amber-400" />
-            Personalized Clinical Recommendations
-          </h3>
-          <ul className="space-y-2">
-            {analysis.tips.map((tip, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-xs text-slate-300">
-                <span className="text-amber-400 font-bold mt-0.5">•</span>
-                <span className="leading-relaxed">{tip}</span>
-              </li>
-            ))}
-          </ul>
+          {/* Urgent Clinical Recommendations for these detected abnormalities */}
+          {analysis?.tips && analysis.tips.length > 0 && (
+            <div className="bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-slate-900 border border-amber-500/35 rounded-2xl p-4 space-y-2 shadow-md">
+              <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5 text-amber-400" />
+                Immediate Action Recommendations
+              </h4>
+              <ul className="space-y-1.5">
+                {analysis.tips.map((tip, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-xs text-slate-300">
+                    <span className="text-amber-400 font-bold mt-0.5">•</span>
+                    <span className="leading-relaxed">{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </section>
       )}
 
@@ -446,6 +452,53 @@ export default function Dashboard() {
           </RadarChart>
         </ResponsiveContainer>
       </section>
+
+      {/* BOTTOM SECTION: Full Comprehensive List of All Detected Conditions & Health Breakdown */}
+      <section className="space-y-3">
+        <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+          <ClipboardList className="w-3.5 h-3.5 text-violet-400" />
+          Comprehensive Sleep Health Analysis
+        </h3>
+
+        {analysis?.conditions && analysis.conditions.length > 0 ? (
+          <div className="space-y-2.5">
+            {analysis.conditions
+              .sort((a, b) => {
+                const riskOrder = { critical: 0, high: 1, moderate: 2, low: 3 };
+                return (riskOrder[a.risk] ?? 4) - (riskOrder[b.risk] ?? 4);
+              })
+              .map((condition) => (
+                <RiskAlert key={condition.id} condition={condition} />
+              ))}
+          </div>
+        ) : (
+          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex items-center gap-3">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+            <div>
+              <h4 className="text-xs font-bold text-emerald-300">All Metrics Optimal</h4>
+              <p className="text-[11px] text-slate-400">All sleep dynamics and vitals are in normal reference ranges.</p>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* BOTTOM SECTION: Full Clinical Recommendations & AI Tips */}
+      {analysis?.tips && analysis.tips.length > 0 && (
+        <section className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 space-y-3">
+          <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+            <Zap className="w-4 h-4 text-amber-400" />
+            Full Clinical Recommendations & Sleep Optimization
+          </h3>
+          <ul className="space-y-2">
+            {analysis.tips.map((tip, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-xs text-slate-300">
+                <span className="text-violet-400 font-bold mt-0.5">•</span>
+                <span className="leading-relaxed">{tip}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Clinical Disclaimer */}
       <div className="text-center pt-2">
