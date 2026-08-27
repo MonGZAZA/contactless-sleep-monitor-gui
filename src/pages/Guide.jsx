@@ -129,6 +129,7 @@ export default function Guide() {
           </p>
           <ul className="text-xs text-slate-400 space-y-1 pl-4 list-disc">
             <li><strong>Pop-Up Slider Window</strong>: Tap any metric card to open its adjustment sheet with <code>[-]</code> and <code>[+]</code> precision buttons.</li>
+            <li><strong>🧬 Research-Based Physiological Cross-Coupling</strong>: When you adjust one parameter (e.g. low breathing, high AHI, hot room temperature), the AI automatically calculates coupled biological reflexes (e.g. hypoxic HR drops, airway snoring surges, thermal restlessness) and cites the medical literature!</li>
             <li><strong>Advance Emergency Warnings</strong>: If you slide near dangerous limits (e.g., HR ≤28 bpm, AHI &gt;50), a red warning banner alerts you inside the popup.</li>
             <li><strong>Safe Commit on Button Press</strong>: Changes only apply when you click <strong>"Apply & Set Parameter"</strong>, preventing accidental alarm triggers while dragging!</li>
           </ul>

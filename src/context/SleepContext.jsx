@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useMemo, useEffect, useRef } from 'react';
 import { PRESETS, analyzeSleep } from '../data/sleepAnalysis';
+import { calculatePhysiologicalCoupling } from '../data/physiologicalCoupling';
 
 const SleepContext = createContext(null);
 
@@ -198,15 +199,31 @@ export function SleepProvider({ children }) {
     }
   }, [analysis?.emergency?.isEmergency]);
 
+  // Physiological cross-coupling toggle (research-based inter-parameter reflex simulation)
+  const [autoCrossCoupling, setAutoCrossCoupling] = useState(true);
+  const [recentCouplings, setRecentCouplings] = useState([]);
+
+  const dismissCouplingAlert = () => setRecentCouplings([]);
+
   const updateParam = (key, value) => {
     // If emergency alert is currently active, freeze slider inputs so holding/dragging cannot dismiss it
     if (analysis?.emergency?.isEmergency) return;
     setActivePreset(null);
-    setParams(prev => ({ ...prev, [key]: Number(value) }));
+    const numVal = Number(value);
+
+    if (autoCrossCoupling) {
+      const { nextParams, couplings } = calculatePhysiologicalCoupling(params, key, numVal);
+      setParams(nextParams);
+      setRecentCouplings(couplings);
+    } else {
+      setParams((prev) => ({ ...prev, [key]: numVal }));
+      setRecentCouplings([]);
+    }
   };
 
   const applyPreset = (presetKey) => {
     setActivePreset(presetKey);
+    setRecentCouplings([]);
     setParams({ ...PRESETS[presetKey].params });
   };
 
@@ -228,6 +245,10 @@ export function SleepProvider({ children }) {
     emergencyConfig,
     updateEmergencyConfig,
     resetEmergencyConfig,
+    autoCrossCoupling,
+    setAutoCrossCoupling,
+    recentCouplings,
+    dismissCouplingAlert,
   };
 
   return (
