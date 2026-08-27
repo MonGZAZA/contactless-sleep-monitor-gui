@@ -15,7 +15,11 @@ export default function Layout({ children }) {
       <header className="fixed top-0 left-0 right-0 z-40 bg-slate-900/80 backdrop-blur-xl border-b border-slate-700/50">
         <div className="max-w-lg mx-auto flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="DreamGuard" className="w-8 h-8 rounded-lg" />
+            <img
+              src="/logo.png"
+              alt="DreamGuard"
+              className="w-8 h-8 object-contain drop-shadow-[0_0_8px_rgba(139,92,246,0.3)]"
+            />
             <span className="text-lg font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
               DreamGuard
             </span>
