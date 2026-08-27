@@ -5,7 +5,6 @@ import {
   X,
   Volume2,
   VolumeX,
-  Vibrate,
   ShieldCheck,
   Radio,
   CheckCircle,
@@ -21,12 +20,10 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
   const initialSeconds = emergencyConfig?.countdownSeconds || 30;
   const [countdown, setCountdown] = useState(initialSeconds);
   const [isMuted, setIsMuted] = useState(false);
-  const [vibrating, setVibrating] = useState(true);
   const [isDispatched, setIsDispatched] = useState(false);
 
   const audioCtxRef = useRef(null);
   const soundIntervalRef = useRef(null);
-  const vibeIntervalRef = useRef(null);
 
   // Reset state when emergency opens
   useEffect(() => {
@@ -36,42 +33,7 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
     }
   }, [emergency?.isEmergency, initialSeconds]);
 
-  // 1. Vibration Engine (HTML5 navigator.vibrate)
-  useEffect(() => {
-    if (!emergency?.isEmergency || isDispatched) {
-      if (vibeIntervalRef.current) clearInterval(vibeIntervalRef.current);
-      if ('vibrate' in navigator) {
-        try {
-          navigator.vibrate(0);
-        } catch (e) {}
-      }
-      return;
-    }
-
-    const triggerVibrate = () => {
-      if ('vibrate' in navigator && emergencyConfig?.vibrationEnabled && vibrating) {
-        try {
-          navigator.vibrate([600, 200, 600, 200, 1000, 300, 600, 200, 600]);
-        } catch (e) {
-          console.warn('Vibration API error:', e);
-        }
-      }
-    };
-
-    triggerVibrate();
-    vibeIntervalRef.current = setInterval(triggerVibrate, 3800);
-
-    return () => {
-      if (vibeIntervalRef.current) clearInterval(vibeIntervalRef.current);
-      if ('vibrate' in navigator) {
-        try {
-          navigator.vibrate(0);
-        } catch (e) {}
-      }
-    };
-  }, [emergency, emergencyConfig?.vibrationEnabled, vibrating, isDispatched]);
-
-  // 2. Synthesized Alarm Siren (Web Audio API)
+  // Synthesized Alarm Siren (Web Audio API)
   useEffect(() => {
     if (!emergency?.isEmergency || isMuted || !emergencyConfig?.audioAlarmEnabled || isDispatched) {
       if (soundIntervalRef.current) clearInterval(soundIntervalRef.current);
@@ -119,7 +81,7 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
     };
   }, [emergency, isMuted, emergencyConfig?.audioAlarmEnabled, isDispatched]);
 
-  // 3. Countdown Timer (When reaching 0 -> Switch to Simulation Dispatched View)
+  // Countdown Timer (When reaching 0 -> Switch to Simulation Dispatched View)
   useEffect(() => {
     if (!emergency?.isEmergency || isDispatched) return;
 
@@ -128,7 +90,7 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          setIsDispatched(true); // Switch to simulated dispatch screen
+          setIsDispatched(true);
           return 0;
         }
         return prev - 1;
@@ -147,11 +109,6 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
   const secondaryName = emergencyConfig?.secondaryName || 'Dr. Somchai (Physician)';
 
   const handleDismiss = () => {
-    if ('vibrate' in navigator) {
-      try {
-        navigator.vibrate(0);
-      } catch (e) {}
-    }
     setIsDispatched(false);
     onDismiss();
   };
@@ -204,53 +161,35 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
               <span>In real deployment, DreamGuard executes:</span>
             </div>
 
-            <div className="space-y-2 text-[11px] text-slate-300">
-              <div className="flex items-start gap-2">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-bold text-white">Automated Emergency Call:</span>
-                  <p className="text-slate-400">
-                    Auto-dials <strong>{dispatchNumber}</strong> with synthesized speech vital distress broadcast.
-                  </p>
-                </div>
+            <div className="flex items-start gap-2 text-slate-300 text-[11px]">
+              <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-white">Auto-Dial Medical Dispatch:</strong>
+                <p className="text-slate-400">Emergency voice call initiated to <strong>{dispatchNumber}</strong> with automated TTS speech synthesizer.</p>
               </div>
+            </div>
 
-              <div className="flex items-start gap-2">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-bold text-white">Biometric Telemetry Broadcast:</span>
-                  <p className="text-slate-400">
-                    Transmitted: HR <strong>{liveParams.heartRate} bpm</strong>, Breathing <strong>{liveParams.breathingRate} br/min</strong>, AHI <strong>{params.ahi}</strong>.
-                  </p>
-                </div>
+            <div className="flex items-start gap-2 text-slate-300 text-[11px]">
+              <MessageSquare className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-white">Priority SMS & Push Alerts:</strong>
+                <p className="text-slate-400">Sent to <strong>{primaryName}</strong> ({primaryPhone}) & <strong>{secondaryName}</strong>.</p>
               </div>
+            </div>
 
-              <div className="flex items-start gap-2">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-bold text-white">SMS Alerts to Family & Physician:</span>
-                  <p className="text-slate-400">
-                    Alerted {primaryName} ({primaryPhone}) & {secondaryName} ({secondaryPhone}).
-                  </p>
-                </div>
+            <div className="flex items-start gap-2 text-slate-300 text-[11px]">
+              <MapPin className="w-3.5 h-3.5 text-violet-400 shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-white">Biometric Telemetry Stream:</strong>
+                <p className="text-slate-400">Sent HR: {liveParams.heartRate} bpm, BR: {liveParams.breathingRate} br/min & GPS coordinates.</p>
               </div>
-
-              {emergencyConfig?.autoLocationSharing && (
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-bold text-white">GPS Bedroom Coordinates:</span>
-                    <p className="text-slate-400">Transmitted 13.7563° N, 100.5018° E to responders.</p>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Reset Button */}
+          {/* Dismiss and Reset Button */}
           <button
-            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-900/30 text-xs"
             onClick={handleDismiss}
+            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-900/40 text-xs"
           >
             <RotateCcw className="w-4 h-4" />
             Reset Simulation & Return to Normal
@@ -267,7 +206,7 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-red-950/95 backdrop-blur-lg">
       <div className="absolute inset-0 bg-red-600/15 animate-pulse pointer-events-none" />
 
-      <div className="bg-slate-900 border-2 border-red-500 rounded-3xl w-full max-w-sm p-6 flex flex-col items-center text-center shadow-[0_0_60px_rgba(239,68,68,0.5)] relative z-10 animate-slide-up animate-vibrate">
+      <div className="bg-slate-900 border-2 border-red-500 rounded-3xl w-full max-w-sm p-6 flex flex-col items-center text-center shadow-[0_0_60px_rgba(239,68,68,0.5)] relative z-10 animate-slide-up">
         {/* Top-Right Quick Close Button */}
         <button
           onClick={handleDismiss}
@@ -283,7 +222,7 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
           <AlertTriangle className="w-12 h-12 text-red-500" />
         </div>
 
-        {/* Alarm Controls: Mute Sound & Vibration */}
+        {/* Alarm Controls: Mute Siren Sound */}
         <div className="flex items-center gap-2 mb-3">
           <button
             onClick={() => setIsMuted(!isMuted)}
@@ -295,32 +234,7 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
             title="Toggle siren sound"
           >
             {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-            <span className="text-[10px]">{isMuted ? 'Muted' : 'Siren'}</span>
-          </button>
-
-          <button
-            onClick={() => {
-              const nextVibe = !vibrating;
-              setVibrating(nextVibe);
-              if ('vibrate' in navigator) {
-                try {
-                  if (nextVibe) {
-                    navigator.vibrate([400, 200, 400, 200, 800]);
-                  } else {
-                    navigator.vibrate(0);
-                  }
-                } catch (e) {}
-              }
-            }}
-            className={`p-1.5 rounded-lg border text-xs flex items-center gap-1 transition-all ${
-              !vibrating
-                ? 'bg-slate-800 border-slate-700 text-slate-400'
-                : 'bg-red-900/40 border-red-500/40 text-red-300'
-            }`}
-            title="Toggle phone vibration"
-          >
-            <Vibrate className="w-3.5 h-3.5" />
-            <span className="text-[10px]">{vibrating ? 'Vibrating' : 'Vibe Off'}</span>
+            <span className="text-[10px]">{isMuted ? 'Alarm Muted' : 'Siren Active'}</span>
           </button>
         </div>
 
@@ -351,20 +265,6 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
           >
             <Phone className="w-4 h-4" />
             Simulate Immediate Dispatch Call
-          </button>
-
-          <button
-            onClick={() => {
-              if ('vibrate' in navigator) {
-                try {
-                  navigator.vibrate([500, 200, 500, 200, 500, 200, 800]);
-                } catch (e) {}
-              }
-            }}
-            className="w-full bg-slate-800/80 hover:bg-slate-750 active:scale-95 text-slate-300 hover:text-white font-semibold py-2 px-3 rounded-xl border border-slate-700 flex items-center justify-center gap-1.5 text-xs transition-all"
-          >
-            <Vibrate className="w-3.5 h-3.5 text-red-400" />
-            <span>Tap to Pulse Phone Vibration (Android)</span>
           </button>
 
           <button

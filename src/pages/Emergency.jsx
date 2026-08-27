@@ -84,7 +84,7 @@ export default function Emergency() {
         className="w-full bg-gradient-to-r from-red-600/30 to-rose-600/30 hover:from-red-600/40 hover:to-rose-600/40 border border-red-500/50 text-red-300 font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-2.5 transition-all shadow-lg active:scale-95"
       >
         <AlertCircle className="w-5 h-5 text-red-400 animate-pulse" />
-        <span>Test Emergency Alert (Vibration & Siren)</span>
+        <span>Test Emergency Alert (Audio Siren & Visual Strobe)</span>
       </button>
 
       {/* Emergency Contacts Configuration (Fully Editable) */}
@@ -232,23 +232,6 @@ export default function Emergency() {
 
         {/* Toggle Switches */}
         <div className="space-y-2.5 pt-2 border-t border-slate-700/50">
-          {/* Phone Vibration */}
-          <label className="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-700/50 cursor-pointer">
-            <div className="flex items-center gap-2 text-xs">
-              <Vibrate className="w-4 h-4 text-violet-400" />
-              <div>
-                <div className="font-medium text-white">Phone Hardware Vibration</div>
-                <div className="text-[10px] text-slate-400">Vibrate mobile device during emergency</div>
-              </div>
-            </div>
-            <input
-              type="checkbox"
-              checked={emergencyConfig?.vibrationEnabled ?? true}
-              onChange={(e) => handleFieldChange('vibrationEnabled', e.target.checked)}
-              className="w-4 h-4 rounded text-violet-600 accent-violet-600 focus:ring-0 cursor-pointer"
-            />
-          </label>
-
           {/* Siren Sound */}
           <label className="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-700/50 cursor-pointer">
             <div className="flex items-center gap-2 text-xs">
