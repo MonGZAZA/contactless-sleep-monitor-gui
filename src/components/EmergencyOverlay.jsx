@@ -167,6 +167,15 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-xl animate-fade-in overflow-y-auto">
         <div className="bg-slate-900 border-2 border-emerald-500/80 rounded-3xl w-full max-w-sm p-6 flex flex-col items-center text-center shadow-[0_0_60px_rgba(16,185,129,0.3)] relative z-10 animate-slide-up my-auto">
+          {/* Top-Right Quick Close Button */}
+          <button
+            onClick={handleDismiss}
+            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors border border-slate-700"
+            title="Dismiss and return"
+          >
+            <X className="w-4 h-4" />
+          </button>
+
           {/* Success Icon */}
           <div className="bg-emerald-500/20 p-4 rounded-full mb-3 border border-emerald-500/40 relative">
             <ShieldCheck className="w-12 h-12 text-emerald-400" />
@@ -259,6 +268,15 @@ export default function EmergencyOverlay({ emergency, onDismiss }) {
       <div className="absolute inset-0 bg-red-600/15 animate-pulse pointer-events-none" />
 
       <div className="bg-slate-900 border-2 border-red-500 rounded-3xl w-full max-w-sm p-6 flex flex-col items-center text-center shadow-[0_0_60px_rgba(239,68,68,0.5)] relative z-10 animate-slide-up">
+        {/* Top-Right Quick Close Button */}
+        <button
+          onClick={handleDismiss}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors border border-slate-700"
+          title="Dismiss Alert"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
         {/* Pulsing Alarm Icon */}
         <div className="bg-red-500/25 p-4 rounded-full mb-3 animate-pulse relative">
           <span className="absolute inset-0 rounded-full border border-red-400/60 animate-ping" />

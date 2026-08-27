@@ -5,9 +5,17 @@ import { PARAM_CONFIG, PRESETS, CATEGORIES } from '../data/sleepAnalysis';
 import ParameterButton from '../components/ParameterButton';
 import SliderModal from '../components/SliderModal';
 import EmergencyOverlay from '../components/EmergencyOverlay';
-import LiveIndicators from '../components/LiveIndicators';
 import * as Icons from 'lucide-react';
-import { RefreshCw, ChevronLeft, ChevronRight, BookOpen, ArrowRight, BarChart3, Sparkles } from 'lucide-react';
+import {
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight,
+  BookOpen,
+  ArrowRight,
+  BarChart3,
+  SlidersHorizontal,
+  Touchpad,
+} from 'lucide-react';
 
 export default function Simulator() {
   const {
@@ -55,11 +63,11 @@ export default function Simulator() {
   };
 
   return (
-    <div className="space-y-5 animate-fade-in pb-8">
+    <div className="space-y-5 animate-fade-in pb-10">
       {/* Emergency Overlay */}
       <EmergencyOverlay emergency={analysis?.emergency} onDismiss={handleDismissEmergency} />
 
-      {/* Slider Popover Modal (When any parameter card is pushed) */}
+      {/* Slider Popover Modal */}
       {activeParamKey && (
         <SliderModal
           paramKey={activeParamKey}
@@ -116,7 +124,7 @@ export default function Simulator() {
           </div>
         </div>
         <p className="text-xs text-slate-400 mb-3">
-          Select a preset scenario or tap any metric card below to adjust values.
+          Select a preset case or tap any metric button below to adjust sleeper vitals.
         </p>
 
         {/* Horizontal Case Selection with Drag & Touch Scroll */}
@@ -155,10 +163,13 @@ export default function Simulator() {
         </div>
       </section>
 
-      {/* Live Dynamic Pulse Indicators */}
-      <LiveIndicators liveParams={liveParams} baseParams={params} />
+      {/* Clear Tap Hint Pill */}
+      <div className="flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-full bg-violet-500/10 border border-violet-500/25 text-violet-300 text-[11px] font-medium text-center">
+        <SlidersHorizontal className="w-3.5 h-3.5 shrink-0" />
+        <span>Tap any parameter card to pop up the slider and adjust values</span>
+      </div>
 
-      {/* Compact Interactive Parameter Cards (Organized by Category) */}
+      {/* Interactive Parameter Cards (Organized by Category with embedded animations) */}
       <section className="space-y-5">
         {Object.entries(CATEGORIES).map(([catKey, category]) => {
           const CatIcon = Icons[category.icon] || Icons.Activity;

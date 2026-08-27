@@ -3,7 +3,6 @@ import { useSleep } from '../context/SleepContext';
 import SleepScoreGauge from '../components/SleepScoreGauge';
 import MetricCard from '../components/MetricCard';
 import RiskAlert from '../components/RiskAlert';
-import LiveIndicators from '../components/LiveIndicators';
 import {
   AreaChart,
   Area,
@@ -149,14 +148,11 @@ export default function Dashboard() {
         </p>
       </section>
 
-      {/* Live Monitoring Pulse Indicators */}
-      <LiveIndicators liveParams={liveParams} baseParams={params} />
-
-      {/* Vital Signs Grid */}
+      {/* Vital Signs Grid (Embedded animated heart and respiration pulse) */}
       <section>
         <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
           <Heart className="w-3.5 h-3.5 text-red-400" />
-          Vital Signs (Continuous Radar)
+          Vital Signs
         </h3>
         <div className="grid grid-cols-2 gap-3">
           <MetricCard
@@ -165,7 +161,7 @@ export default function Dashboard() {
             unit="bpm"
             icon="HeartPulse"
             color="red"
-            subtitle="Ballistocardiography pulse"
+            subtitle="Sleeping pulse rate"
           />
           <MetricCard
             label="Breathing Rate"
@@ -173,12 +169,12 @@ export default function Dashboard() {
             unit="br/min"
             icon="Wind"
             color="cyan"
-            subtitle="Chest wall respiration"
+            subtitle="Respiratory rate"
           />
         </div>
       </section>
 
-      {/* Sleep Dynamics & Airway Grid (Spacious & Clean) */}
+      {/* Sleep Dynamics & Airway Grid */}
       <section>
         <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
           <Activity className="w-3.5 h-3.5 text-violet-400" />
@@ -373,7 +369,7 @@ export default function Dashboard() {
         </ResponsiveContainer>
       </section>
 
-      {/* Detected Conditions (Moved from Simulator) */}
+      {/* Detected Conditions */}
       <section className="space-y-3">
         <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
           <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
@@ -402,7 +398,7 @@ export default function Dashboard() {
         )}
       </section>
 
-      {/* Clinical Recommendations & AI Tips (Moved from Simulator) */}
+      {/* Clinical Recommendations & AI Tips */}
       {analysis?.tips && analysis.tips.length > 0 && (
         <section className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 space-y-3">
           <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">

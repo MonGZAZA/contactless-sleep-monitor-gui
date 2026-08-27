@@ -34,6 +34,13 @@ export default function MetricCard({ label, value, unit, icon, color = 'violet',
 
   const scheme = colorMap[color] || colorMap.violet;
 
+  // Real-time animation durations
+  const heartDuration = typeof value === 'number' ? Math.max(0.35, 60 / (value || 60)) : 1;
+  const breathDuration = typeof value === 'number' ? Math.max(0.6, 60 / (value || 15)) : 4;
+
+  const isHeart = icon === 'HeartPulse' || label.toLowerCase().includes('heart');
+  const isBreath = icon === 'Wind' || label.toLowerCase().includes('breath');
+
   return (
     <div
       className={`bg-slate-800/60 backdrop-blur-xl border rounded-2xl p-3.5 flex flex-col justify-between transition-all duration-200 shadow-sm ${scheme.border}`}
@@ -43,7 +50,19 @@ export default function MetricCard({ label, value, unit, icon, color = 'violet',
           {label}
         </span>
         <div className={`p-1.5 rounded-xl ${scheme.iconBg} shrink-0`}>
-          <IconComponent className="w-4 h-4" />
+          {isHeart ? (
+            <IconComponent
+              className="w-4 h-4"
+              style={{ animation: `heartbeat ${heartDuration}s ease-in-out infinite` }}
+            />
+          ) : isBreath ? (
+            <IconComponent
+              className="w-4 h-4"
+              style={{ animation: `breathe ${breathDuration}s ease-in-out infinite` }}
+            />
+          ) : (
+            <IconComponent className="w-4 h-4" />
+          )}
         </div>
       </div>
 
