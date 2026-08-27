@@ -125,7 +125,10 @@ export default function Dashboard() {
   const hrChartData = graphMode === 'live' ? liveHrData : sessionHrData;
   const brChartData = graphMode === 'live' ? liveBrData : sessionBrData;
 
-  const hasAbnormalConditions = analysis?.conditions && analysis.conditions.length > 0;
+  // Only strictly abnormal conditions (critical, high, or moderate risk)
+  const abnormalConditions = (analysis?.conditions || []).filter(
+    (c) => c.risk === 'critical' || c.risk === 'high' || c.risk === 'moderate'
+  );
 
   return (
     <div className="space-y-6 animate-fade-in pb-12">
@@ -151,8 +154,8 @@ export default function Dashboard() {
         </p>
       </section>
 
-      {/* TOP SECTION: Detected Conditions & Clinical Risks (If anything is abnormal, shown right at the top!) */}
-      {hasAbnormalConditions ? (
+      {/* ONLY SHOWN IF ABNORMAL: Detected Conditions & Clinical Risks */}
+      {abnormalConditions.length > 0 && (
         <section className="space-y-3 animate-fade-in">
           <h3 className="text-xs font-bold text-red-300 uppercase tracking-wider flex items-center gap-1.5">
             <AlertTriangle className="w-4 h-4 text-red-400 animate-pulse" />
@@ -160,29 +163,21 @@ export default function Dashboard() {
           </h3>
 
           <div className="space-y-2.5">
-            {analysis.conditions
+            {abnormalConditions
               .sort((a, b) => {
-                const riskOrder = { critical: 0, high: 1, moderate: 2, low: 3 };
-                return (riskOrder[a.risk] ?? 4) - (riskOrder[b.risk] ?? 4);
+                const riskOrder = { critical: 0, high: 1, moderate: 2 };
+                return (riskOrder[a.risk] ?? 3) - (riskOrder[b.risk] ?? 3);
               })
               .map((condition) => (
                 <RiskAlert key={condition.id} condition={condition} />
               ))}
           </div>
         </section>
-      ) : (
-        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-3.5 flex items-center gap-3">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-          <div>
-            <h4 className="text-xs font-bold text-emerald-300">All Metrics Within Healthy Ranges</h4>
-            <p className="text-[10px] text-slate-400">No sleep apnea, arrhythmia, or nocturnal anomalies detected.</p>
-          </div>
-        </div>
       )}
 
-      {/* TOP SECTION: Personalized Clinical Recommendations & AI Guidance */}
-      {analysis?.tips && analysis.tips.length > 0 && (
-        <section className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-slate-900 border border-amber-500/30 rounded-2xl p-4 space-y-2.5 shadow-md">
+      {/* ONLY SHOWN IF ABNORMAL: Actionable Clinical Recommendations for Detected Issues */}
+      {abnormalConditions.length > 0 && analysis?.tips && analysis.tips.length > 0 && (
+        <section className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-slate-900 border border-amber-500/30 rounded-2xl p-4 space-y-2.5 shadow-md animate-fade-in">
           <h3 className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
             <Zap className="w-4 h-4 text-amber-400" />
             Personalized Clinical Recommendations
