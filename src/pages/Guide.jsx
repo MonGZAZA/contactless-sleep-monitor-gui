@@ -18,6 +18,7 @@ import {
   Volume2,
   ShieldAlert,
   ClipboardList,
+  Settings,
 } from 'lucide-react';
 
 export default function Guide() {
