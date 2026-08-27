@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Icons from 'lucide-react';
 import { X, Check, Minus, Plus, Info, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { PARAM_CONFIG } from '../data/sleepAnalysis';
@@ -43,8 +43,8 @@ function getEmergencyThresholdInfo(paramKey, value) {
       isApproaching,
       limits: '≤28 or ≥150 bpm',
       warningMessage: isTriggered
-        ? 'Setting Heart Rate to ≤28 or ≥150 bpm will IMMEDIATELY trigger the Critical Emergency Alarm & Auto-Dispatch countdown!'
-        : 'Warning: Approaching cardiac emergency threshold (≤28 or ≥150 bpm). Sliding further will trigger the emergency alarm.',
+        ? 'Setting Heart Rate to ≤28 or ≥150 bpm will trigger the Critical Emergency Alarm & Auto-Dispatch when applied!'
+        : 'Warning: Approaching cardiac emergency threshold (≤28 or ≥150 bpm). Applying this value may trigger the emergency alarm.',
     };
   }
   if (paramKey === 'breathingRate') {
@@ -56,8 +56,8 @@ function getEmergencyThresholdInfo(paramKey, value) {
       isApproaching,
       limits: '≤3 br/min',
       warningMessage: isTriggered
-        ? 'Setting Breathing Rate to ≤3 br/min will IMMEDIATELY trigger the Respiratory Cessation Emergency Alarm & Auto-Dispatch countdown!'
-        : 'Warning: Approaching respiratory cessation threshold (≤3 br/min). Sliding further will trigger the emergency alarm.',
+        ? 'Setting Breathing Rate to ≤3 br/min will trigger the Respiratory Cessation Emergency Alarm when applied!'
+        : 'Warning: Approaching respiratory cessation threshold (≤3 br/min). Applying this value may trigger the emergency alarm.',
     };
   }
   if (paramKey === 'ahi') {
@@ -69,8 +69,8 @@ function getEmergencyThresholdInfo(paramKey, value) {
       isApproaching,
       limits: '>50 ev/hr',
       warningMessage: isTriggered
-        ? 'Setting AHI >50 will IMMEDIATELY trigger the Severe Apnea Emergency Alarm & Auto-Dispatch countdown!'
-        : 'Warning: Approaching severe apnea emergency threshold (>50 ev/hr). Sliding further will trigger the emergency alarm.',
+        ? 'Setting AHI >50 will trigger the Severe Apnea Emergency Alarm when applied!'
+        : 'Warning: Approaching severe apnea emergency threshold (>50 ev/hr). Applying this value may trigger the emergency alarm.',
     };
   }
   return null;
@@ -98,25 +98,37 @@ const statusLabels = {
 };
 
 export default function SliderModal({ paramKey, value, onChange, onClose }) {
+  // Local state so changes only commit when clicking the button
+  const [localValue, setLocalValue] = useState(value);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [paramKey, value]);
+
   if (!paramKey) return null;
   const config = PARAM_CONFIG[paramKey];
   if (!config) return null;
 
   const IconComponent = Icons[config.icon] || Icons.Activity;
-  const { status, optimal } = getValueStatus(paramKey, value);
-  const emergencyInfo = getEmergencyThresholdInfo(paramKey, value);
+  const { status, optimal } = getValueStatus(paramKey, localValue);
+  const emergencyInfo = getEmergencyThresholdInfo(paramKey, localValue);
 
   const handleStep = (direction) => {
     const step = config.step || 1;
-    const nextVal = direction > 0 ? value + step : value - step;
+    const nextVal = direction > 0 ? localValue + step : localValue - step;
     const clamped = Math.max(config.min, Math.min(config.max, nextVal));
     const rounded = Number.isInteger(step) ? Math.round(clamped) : Number(clamped.toFixed(1));
-    onChange(paramKey, rounded);
+    setLocalValue(rounded);
+  };
+
+  const handleApply = () => {
+    onChange(paramKey, localValue);
+    onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-      {/* Backdrop tap to close */}
+      {/* Backdrop tap to close (cancels without applying) */}
       <div className="absolute inset-0" onClick={onClose} />
 
       {/* Modal / Bottom Sheet Box */}
@@ -135,12 +147,13 @@ export default function SliderModal({ paramKey, value, onChange, onClose }) {
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+            title="Cancel without applying"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Real-Time Emergency Warning Alert (Shown when entering/approaching alert limit) */}
+        {/* Real-Time Emergency Warning Alert (Displayed locally as you adjust) */}
         {emergencyInfo && (emergencyInfo.isTriggered || emergencyInfo.isApproaching) && (
           <div
             className={`p-3 rounded-2xl border flex items-start gap-2.5 transition-all ${
@@ -157,7 +170,7 @@ export default function SliderModal({ paramKey, value, onChange, onClose }) {
             <div className="text-xs">
               <strong className="block font-bold mb-0.5">
                 {emergencyInfo.isTriggered
-                  ? '🚨 CRITICAL EMERGENCY LIMIT REACHED'
+                  ? '🚨 CRITICAL EMERGENCY LIMIT'
                   : '⚠️ EMERGENCY LIMIT APPROACHING'}
               </strong>
               <p className="text-[11px] leading-snug">
@@ -172,7 +185,7 @@ export default function SliderModal({ paramKey, value, onChange, onClose }) {
           <button
             type="button"
             onClick={() => handleStep(-1)}
-            disabled={value <= config.min}
+            disabled={localValue <= config.min}
             className="w-10 h-10 rounded-xl bg-slate-900 hover:bg-slate-700 border border-slate-700 text-slate-200 flex items-center justify-center active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <Minus className="w-5 h-5" />
@@ -180,7 +193,7 @@ export default function SliderModal({ paramKey, value, onChange, onClose }) {
 
           <div className="text-center">
             <div className={`text-3xl font-black tabular-nums tracking-tight ${statusColors[status]}`}>
-              {Number.isInteger(config.step) ? value : value.toFixed(1)}
+              {Number.isInteger(config.step) ? localValue : localValue.toFixed(1)}
               <span className="text-xs font-semibold text-slate-400 ml-1.5">{config.unit}</span>
             </div>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border inline-block mt-1 ${statusBgColors[status]}`}>
@@ -191,7 +204,7 @@ export default function SliderModal({ paramKey, value, onChange, onClose }) {
           <button
             type="button"
             onClick={() => handleStep(1)}
-            disabled={value >= config.max}
+            disabled={localValue >= config.max}
             className="w-10 h-10 rounded-xl bg-slate-900 hover:bg-slate-700 border border-slate-700 text-slate-200 flex items-center justify-center active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <Plus className="w-5 h-5" />
@@ -205,8 +218,8 @@ export default function SliderModal({ paramKey, value, onChange, onClose }) {
             min={config.min}
             max={config.max}
             step={config.step}
-            value={value}
-            onChange={(e) => onChange(paramKey, Number(e.target.value))}
+            value={localValue}
+            onChange={(e) => setLocalValue(Number(e.target.value))}
             className="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-500"
           />
           <div className="flex justify-between text-[10px] text-slate-400 font-mono">
@@ -227,14 +240,24 @@ export default function SliderModal({ paramKey, value, onChange, onClose }) {
           <p className="text-[11px] leading-relaxed text-slate-300">{config.description}</p>
         </div>
 
-        {/* Confirm / Done Button */}
-        <button
-          onClick={onClose}
-          className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-violet-900/30 transition-all active:scale-95 text-xs"
-        >
-          <Check className="w-4 h-4" />
-          Set Parameter & Close
-        </button>
+        {/* Action Buttons: Apply & Cancel */}
+        <div className="flex gap-2.5 pt-1">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-1.5 transition-all border border-slate-700 text-xs"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleApply}
+            className="flex-[2] bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:scale-95 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-violet-900/30 transition-all text-xs"
+          >
+            <Check className="w-4 h-4" />
+            Apply & Set Parameter
+          </button>
+        </div>
       </div>
     </div>
   );
