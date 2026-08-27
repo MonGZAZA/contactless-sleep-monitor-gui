@@ -3,6 +3,7 @@ import { useSleep } from '../context/SleepContext';
 import SleepScoreGauge from '../components/SleepScoreGauge';
 import MetricCard from '../components/MetricCard';
 import RiskAlert from '../components/RiskAlert';
+import SleepStagesCard from '../components/SleepStagesCard';
 import {
   AreaChart,
   Area,
@@ -427,6 +428,9 @@ export default function Dashboard() {
           </ResponsiveContainer>
         </div>
       </section>
+
+      {/* Sleep Stages & Hypnogram (Architecture) */}
+      <SleepStagesCard sleepStages={analysis?.sleepStages} />
 
       {/* Radar 8-Component Breakdown */}
       <section className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-4 h-72">

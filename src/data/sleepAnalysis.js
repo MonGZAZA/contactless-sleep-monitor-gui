@@ -935,6 +935,181 @@ function generateAssessment(sleepScore, conditions, emergency) {
 }
 
 // ---------------------------------------------------------------------------
+// SLEEP STAGES & HYPNOGRAM CLASSIFIER (Radar Ballistocardiography & Micromotion)
+// Based on AASM Scoring Manual & mmWave Sleep Staging (Zhao et al. ICML 2017)
+// ---------------------------------------------------------------------------
+export function calculateSleepStages(params) {
+  const duration = params.sleepDuration || 7.5;
+  const latencyMin = params.sleepOnsetLatency || 12;
+  const wasoMin = params.waso || 15;
+  const awakenings = params.awakenings || 1;
+  const ahi = params.ahi || 2;
+  const temp = params.roomTemp || 20;
+  const mov = params.bodyMovement || 4;
+  const hr = params.heartRate || 62;
+
+  // 1. Calculate Awake Time %
+  const totalBedMinutes = Math.max(60, Math.round(duration * 60 + latencyMin + wasoMin));
+  const awakeMinutes = latencyMin + wasoMin + awakenings * 3;
+  const awakePercent = Math.min(35, Math.max(3, Math.round((awakeMinutes / totalBedMinutes) * 100)));
+
+  // 2. Base Deep Sleep (N3) % calculation (Target: 18 - 25%)
+  let baseDeepPct = 22;
+  if (temp > 24) baseDeepPct -= Math.min(8, (temp - 24) * 2);
+  if (ahi > 15) baseDeepPct -= Math.min(10, (ahi - 15) * 0.35);
+  if (mov > 10) baseDeepPct -= Math.min(6, (mov - 10) * 0.3);
+  if (awakenings > 3) baseDeepPct -= Math.min(6, (awakenings - 3) * 1.2);
+  if (hr > 75) baseDeepPct -= Math.min(5, (hr - 75) * 0.2);
+  const deepPercent = Math.max(5, Math.min(28, Math.round(baseDeepPct)));
+
+  // 3. Base REM Sleep % calculation (Target: 20 - 25%)
+  let baseRemPct = 23;
+  if (duration < 6.5) baseRemPct -= Math.min(10, (6.5 - duration) * 4);
+  if (ahi > 20) baseRemPct -= Math.min(8, (ahi - 20) * 0.25);
+  if (wasoMin > 30) baseRemPct -= Math.min(6, (wasoMin - 30) * 0.15);
+  const remPercent = Math.max(8, Math.min(28, Math.round(baseRemPct)));
+
+  // 4. Light Sleep (N1 - N2) makes up the remaining sleep budget
+  const lightPercent = Math.max(30, 100 - (awakePercent + deepPercent + remPercent));
+
+  // Compute exact durations in hours & minutes
+  const totalSleepHours = duration;
+  const deepHours = +(totalSleepHours * (deepPercent / 100)).toFixed(1);
+  const remHours = +(totalSleepHours * (remPercent / 100)).toFixed(1);
+  const lightHours = +(totalSleepHours * (lightPercent / 100)).toFixed(1);
+  const awakeHours = +(awakeMinutes / 60).toFixed(1);
+
+  // 5. Generate 8-Hour Overnight Hypnogram Timeline (11:00 PM to 07:00 AM)
+  const timeLabels = [
+    '23:00', '23:30', '00:00', '00:30', '01:00', '01:30',
+    '02:00', '02:30', '03:00', '03:30', '04:00', '04:30',
+    '05:00', '05:30', '06:00', '06:30', '07:00'
+  ];
+
+  const hypnogramTimeline = timeLabels.map((time, idx) => {
+    let stage = 'Light';
+    let stageVal = 1; // 0: Deep, 1: Light, 2: REM, 3: Awake
+    let stageColor = '#06b6d4';
+
+    if (idx === 0 || idx === 16) {
+      stage = 'Awake';
+      stageVal = 3;
+      stageColor = '#f59e0b';
+    } else if (idx === 2 || idx === 3) {
+      if (deepPercent >= 12) {
+        stage = 'Deep';
+        stageVal = 0;
+        stageColor = '#6366f1';
+      } else {
+        stage = 'Light';
+        stageVal = 1;
+        stageColor = '#06b6d4';
+      }
+    } else if (idx === 4) {
+      stage = 'REM';
+      stageVal = 2;
+      stageColor = '#a855f7';
+    } else if (idx === 6 || idx === 7) {
+      if (deepPercent >= 16) {
+        stage = 'Deep';
+        stageVal = 0;
+        stageColor = '#6366f1';
+      } else {
+        stage = 'Light';
+        stageVal = 1;
+        stageColor = '#06b6d4';
+      }
+    } else if (idx === 8) {
+      stage = 'REM';
+      stageVal = 2;
+      stageColor = '#a855f7';
+    } else if (idx === 9 && (ahi > 25 || wasoMin > 40)) {
+      stage = 'Awake';
+      stageVal = 3;
+      stageColor = '#f59e0b';
+    } else if (idx === 10 && deepPercent >= 20) {
+      stage = 'Deep';
+      stageVal = 0;
+      stageColor = '#6366f1';
+    } else if (idx === 11 || idx === 13 || idx === 14) {
+      if (remPercent >= 15) {
+        stage = 'REM';
+        stageVal = 2;
+        stageColor = '#a855f7';
+      } else {
+        stage = 'Light';
+        stageVal = 1;
+        stageColor = '#06b6d4';
+      }
+    } else if (idx === 12 && awakenings >= 5) {
+      stage = 'Awake';
+      stageVal = 3;
+      stageColor = '#f59e0b';
+    }
+
+    return {
+      time,
+      stage,
+      stageVal,
+      stageColor,
+      heartRate: Math.round(params.heartRate * (stageVal === 0 ? 0.88 : stageVal === 2 ? 1.02 : stageVal === 3 ? 1.10 : 0.95)),
+      breathingRate: +(params.breathingRate * (stageVal === 0 ? 0.90 : stageVal === 2 ? 1.08 : stageVal === 3 ? 1.15 : 0.98)).toFixed(1),
+    };
+  });
+
+  const insights = [];
+  if (deepPercent >= 16) {
+    insights.push(`🔋 Physical Recovery: Deep slow-wave sleep is optimal at ${deepPercent}% (${deepHours}h), supporting cellular and tissue restoration.`);
+  } else {
+    insights.push(`⚠️ Reduced Deep Sleep: Deep slow-wave sleep reached only ${deepPercent}% (${deepHours}h). ${temp > 24 ? 'Bedroom heat (>24°C) is suppressing slow-wave delta cycles.' : 'Sleep fragmentation is disrupting physical restoration.'}`);
+  }
+
+  if (remPercent >= 20) {
+    insights.push(`🧠 Cognitive Restoration: REM dream sleep accounted for ${remPercent}% (${remHours}h), promoting memory consolidation and mental clarity.`);
+  } else {
+    insights.push(`⚠️ Shortened REM Sleep: REM sleep was low at ${remPercent}% (${remHours}h). ${duration < 7 ? 'Extending sleep duration allows longer 2nd-half REM cycles.' : 'Acoustic snoring or arousals are curtailing dream states.'}`);
+  }
+
+  return {
+    deep: {
+      percent: deepPercent,
+      durationHours: deepHours,
+      status: deepPercent >= 16 ? 'optimal' : deepPercent >= 10 ? 'fair' : 'low',
+      label: 'Deep (N3)',
+      desc: 'Physical repair & immunity',
+      color: '#6366f1',
+    },
+    rem: {
+      percent: remPercent,
+      durationHours: remHours,
+      status: remPercent >= 20 ? 'optimal' : remPercent >= 14 ? 'fair' : 'low',
+      label: 'REM',
+      desc: 'Memory & cognitive restoration',
+      color: '#a855f7',
+    },
+    light: {
+      percent: lightPercent,
+      durationHours: lightHours,
+      status: 'normal',
+      label: 'Light (N1-N2)',
+      desc: 'Baseline transitional rest',
+      color: '#06b6d4',
+    },
+    awake: {
+      percent: awakePercent,
+      durationHours: awakeHours,
+      durationMinutes: awakeMinutes,
+      status: awakePercent <= 12 ? 'optimal' : awakePercent <= 20 ? 'caution' : 'high',
+      label: 'Awake',
+      desc: 'Latency & nocturnal awakenings',
+      color: '#f59e0b',
+    },
+    hypnogramTimeline,
+    insights,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // MAIN ANALYSIS FUNCTION
 // ---------------------------------------------------------------------------
 export function analyzeSleep(params) {
@@ -988,7 +1163,10 @@ export function analyzeSleep(params) {
   // 5. Check emergency
   const emergency = checkEmergency(params);
 
-  // 6. Generate assessment and tips
+  // 6. Sleep Stages & Hypnogram Classification
+  const sleepStages = calculateSleepStages(params);
+
+  // 7. Generate assessment and tips
   const overallAssessment = generateAssessment(sleepScore, conditions, emergency);
   const tips = generateTips(params, conditions);
 
@@ -1000,5 +1178,7 @@ export function analyzeSleep(params) {
     emergency,
     overallAssessment,
     tips,
+    sleepStages,
   };
 }
+

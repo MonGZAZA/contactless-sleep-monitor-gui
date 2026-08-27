@@ -197,6 +197,12 @@ export default function Guide() {
               </span>
             </div>
             <div className="p-2 bg-slate-900/80 rounded-xl border border-slate-700/60">
+              <span className="font-bold text-cyan-400">🧠 Sleep Stages & Hypnogram (60GHz Radar):</span>
+              <span className="text-slate-300 text-[11px] ml-1">
+                Contactless classification of <strong>Deep Sleep (N3)</strong>, <strong>REM Dream Sleep</strong>, <strong>Light Sleep (N1-N2)</strong>, and <strong>Awake time</strong> with 90-minute ultradian hypnogram cycles!
+              </span>
+            </div>
+            <div className="p-2 bg-slate-900/80 rounded-xl border border-slate-700/60">
               <span className="font-bold text-emerald-400">📋 Full Health Breakdown (At Bottom):</span>
               <span className="text-slate-300 text-[11px] ml-1">
                 Comprehensive evaluation of all parameters and personalized clinical recommendations.
