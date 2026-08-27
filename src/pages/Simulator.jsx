@@ -14,10 +14,6 @@ import {
   ArrowRight,
   BarChart3,
   SlidersHorizontal,
-  Sparkles,
-  Zap,
-  X,
-  Dna,
 } from 'lucide-react';
 
 export default function Simulator() {
@@ -29,10 +25,6 @@ export default function Simulator() {
     applyPreset,
     resetToDefault,
     liveParams,
-    autoCrossCoupling,
-    setAutoCrossCoupling,
-    recentCouplings,
-    dismissCouplingAlert,
   } = useSleep();
 
   const [activeParamKey, setActiveParamKey] = useState(null);
@@ -170,63 +162,11 @@ export default function Simulator() {
         </div>
       </section>
 
-      {/* Physiological Cross-Coupling Toggle & Instruction Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 p-2.5 rounded-2xl bg-slate-850 border border-slate-700/60 text-xs">
-        <div className="flex items-center gap-1.5 text-slate-300 text-[11px]">
-          <SlidersHorizontal className="w-3.5 h-3.5 text-violet-400 shrink-0" />
-          <span>Tap any card to pop up the slider</span>
-        </div>
-
-        {/* Cross-Coupling Switch */}
-        <button
-          type="button"
-          onClick={() => setAutoCrossCoupling(!autoCrossCoupling)}
-          className={`flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-xl border text-[11px] font-semibold transition-all ${
-            autoCrossCoupling
-              ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300 shadow-sm'
-              : 'bg-slate-800 border-slate-700 text-slate-400'
-          }`}
-          title="Toggle research-based physiological cross-coupling"
-        >
-          <Dna className={`w-3.5 h-3.5 ${autoCrossCoupling ? 'text-cyan-400 animate-pulse' : 'text-slate-500'}`} />
-          <span>Physiology Coupling: <strong>{autoCrossCoupling ? 'ON (AI Active)' : 'OFF'}</strong></span>
-        </button>
+      {/* Clear Tap Hint Pill */}
+      <div className="flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-full bg-violet-500/10 border border-violet-500/25 text-violet-300 text-[11px] font-medium text-center">
+        <SlidersHorizontal className="w-3.5 h-3.5 shrink-0" />
+        <span>Tap any parameter card to pop up the slider and adjust values</span>
       </div>
-
-      {/* Real-Time Physiological Cross-Coupling Applied Banner */}
-      {recentCouplings && recentCouplings.length > 0 && (
-        <div className="bg-gradient-to-r from-cyan-950/40 via-indigo-950/30 to-slate-900 border border-cyan-500/40 rounded-2xl p-3.5 space-y-2 animate-slide-up shadow-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <h4 className="text-xs font-bold text-cyan-200">
-                Physiological Cross-Coupling Applied
-              </h4>
-            </div>
-            <button
-              onClick={dismissCouplingAlert}
-              className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="space-y-1.5 text-[11px]">
-            {recentCouplings.map((c, i) => (
-              <div key={i} className="p-2 bg-slate-900/80 rounded-xl border border-slate-700/60">
-                <div className="flex items-center gap-1.5 font-semibold text-white mb-0.5">
-                  <span className="text-cyan-400">⚡ {c.label}:</span>
-                  <span className="text-amber-300 font-mono">{c.delta}</span>
-                </div>
-                <p className="text-slate-300 text-[10px] leading-snug">{c.mechanism}</p>
-                <span className="text-[9px] text-slate-500 block mt-0.5 font-mono">
-                  Medical Ref: {c.reference}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Interactive Parameter Cards (Organized by Category) */}
       <section className="space-y-5">

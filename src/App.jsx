@@ -14,6 +14,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Simulator />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/settings" element={<Emergency />} />
             <Route path="/emergency" element={<Emergency />} />
             <Route path="/guide" element={<Guide />} />
             <Route path="*" element={<Navigate to="/" replace />} />

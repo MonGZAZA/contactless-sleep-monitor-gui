@@ -14,11 +14,12 @@ import {
   Phone,
   User,
   Clock,
-  Vibrate,
   Volume2,
   MapPin,
   RotateCcw,
   Check,
+  Settings,
+  Sparkles,
 } from 'lucide-react';
 import EmergencyOverlay from '../components/EmergencyOverlay';
 
@@ -37,6 +38,8 @@ export default function Emergency() {
     emergencyConfig,
     updateEmergencyConfig,
     resetEmergencyConfig,
+    autoCrossCoupling,
+    setAutoCrossCoupling,
   } = useSleep();
 
   const isEmergency = analysis?.emergency?.isEmergency;
@@ -54,10 +57,10 @@ export default function Emergency() {
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Shield className="w-6 h-6 text-violet-400" />
+          <Settings className="w-6 h-6 text-violet-400" />
           <div>
-            <h2 className="text-xl font-bold text-white">Emergency System</h2>
-            <p className="text-xs text-slate-400">Configure safety thresholds & automated dispatch</p>
+            <h2 className="text-xl font-bold text-white">Settings & Safety</h2>
+            <p className="text-xs text-slate-400">Configure simulation dynamics, safety thresholds & dispatch</p>
           </div>
         </div>
         {savedBadge && (
@@ -86,6 +89,34 @@ export default function Emergency() {
         <AlertCircle className="w-5 h-5 text-red-400 animate-pulse" />
         <span>Test Emergency Alert (Audio Siren & Visual Strobe)</span>
       </button>
+
+      {/* Simulation AI Dynamics & Body Reaction Settings */}
+      <section className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4 space-y-3">
+        <h3 className="text-sm font-semibold text-white flex items-center gap-2 border-b border-slate-700/50 pb-2">
+          <Sparkles className="w-4 h-4 text-cyan-400" />
+          Simulation Biology Dynamics
+        </h3>
+
+        <label className="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-slate-700/60 cursor-pointer">
+          <div className="flex items-start gap-2.5 text-xs pr-3">
+            <Activity className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+            <div>
+              <div className="font-semibold text-white text-xs">
+                Connected Body Vitals (Realistic Reaction)
+              </div>
+              <p className="text-[10px] text-slate-400 leading-snug mt-0.5">
+                When you adjust one vital (like breathing or temperature), connected vitals naturally react based on real human biology.
+              </p>
+            </div>
+          </div>
+          <input
+            type="checkbox"
+            checked={autoCrossCoupling}
+            onChange={(e) => setAutoCrossCoupling(e.target.checked)}
+            className="w-4 h-4 rounded text-cyan-500 accent-cyan-500 focus:ring-0 cursor-pointer shrink-0"
+          />
+        </label>
+      </section>
 
       {/* Emergency Contacts Configuration (Fully Editable) */}
       <section className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4 space-y-4">
@@ -152,41 +183,31 @@ export default function Emergency() {
           </div>
         </div>
 
-        {/* Emergency Dispatch Service Number */}
-        <div className="space-y-2 pt-2 border-t border-slate-700/50">
-          <label className="text-[11px] font-medium text-slate-300 flex items-center justify-between">
-            <span className="flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-red-400" />
-              Medical Emergency Dispatch Hotline
-            </span>
-            <span className="text-[10px] text-slate-400">Auto-dial destination</span>
+        {/* Dispatch Hotlines */}
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-medium text-slate-300 flex items-center gap-1.5">
+            <Shield className="w-3.5 h-3.5 text-red-400" />
+            Emergency Services Hotline Preset
           </label>
-
-          <input
-            type="text"
-            value={emergencyConfig?.dispatchNumber || ''}
-            onChange={(e) => handleFieldChange('dispatchNumber', e.target.value)}
-            placeholder="Emergency Hotline (e.g. 1669, 911)"
-            className="w-full bg-slate-900 border border-slate-700 focus:border-red-500 rounded-xl px-3 py-2 text-sm text-red-400 font-bold outline-none transition-colors"
-          />
-
-          {/* Preset Buttons */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1">
-            {COUNTRY_PRESETS.map((p) => (
+          <div className="grid grid-cols-2 gap-2">
+            {COUNTRY_PRESETS.map((preset) => (
               <button
-                key={p.number}
+                key={preset.number}
                 type="button"
                 onClick={() => {
-                  handleFieldChange('dispatchNumber', p.number);
-                  handleFieldChange('dispatchLabel', `${p.number} (${p.desc})`);
+                  handleFieldChange('dispatchNumber', preset.number);
+                  handleFieldChange('dispatchLabel', `${preset.number} (${preset.label})`);
                 }}
-                className={`px-2 py-1.5 rounded-lg border text-[11px] font-medium transition-all ${
-                  emergencyConfig?.dispatchNumber === p.number
-                    ? 'bg-red-500/20 border-red-500/60 text-red-300'
-                    : 'bg-slate-900/60 border-slate-700/60 text-slate-400 hover:text-slate-200'
+                className={`p-2 rounded-xl border text-left text-xs transition-all ${
+                  emergencyConfig?.dispatchNumber === preset.number
+                    ? 'bg-violet-600/30 border-violet-500 text-white shadow-sm'
+                    : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                {p.label} <span className="font-bold text-white">({p.number})</span>
+                <div className="font-semibold text-white">{preset.label}</div>
+                <div className="text-[10px] text-slate-400 font-mono">
+                  {preset.number} • {preset.desc}
+                </div>
               </button>
             ))}
           </div>
@@ -285,7 +306,7 @@ export default function Emergency() {
           <div className="bg-slate-800/50 border border-slate-700/50 p-4 rounded-2xl">
             <Zap className="w-5 h-5 text-amber-400 mb-2" />
             <h4 className="text-xs font-bold text-white mb-1">Auto-Alert Protocol</h4>
-            <p className="text-[10px] text-slate-400">Triggers vibration, siren, and contacts dispatch</p>
+            <p className="text-[10px] text-slate-400">Triggers siren, strobe, and contacts dispatch</p>
           </div>
           <div className="bg-slate-800/50 border border-slate-700/50 p-4 rounded-2xl">
             <BatteryFull className="w-5 h-5 text-emerald-400 mb-2" />
@@ -318,31 +339,6 @@ export default function Emergency() {
             <div>
               <p className="text-sm font-medium text-slate-200">AHI {'>'} 50 events/hr or Unresponsive</p>
               <p className="text-[10px] text-slate-500">Ref: Severe Obstructive Sleep Apnea / Immobility</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Device Status */}
-      <section>
-        <h3 className="text-sm font-semibold text-slate-300 mb-3">Hardware Status</h3>
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4">
-          <div className="grid grid-cols-2 gap-y-4 gap-x-2">
-            <div className="flex items-center gap-2">
-              <Wifi className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs text-slate-300">Connected (WiFi 5GHz)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Power className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs text-slate-300">AC Power (Stable)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BatteryFull className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs text-slate-300">Backup: 100% (6h)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs text-slate-300">Health Sensor Active</span>
             </div>
           </div>
         </div>

@@ -1,10 +1,10 @@
 import { NavLink } from 'react-router-dom';
-import { SlidersHorizontal, BarChart3, Shield, BookOpen, Wifi, BatteryFull } from 'lucide-react';
+import { SlidersHorizontal, BarChart3, Settings, BookOpen, Wifi, BatteryFull } from 'lucide-react';
 
 const navItems = [
   { to: '/', icon: SlidersHorizontal, label: 'Simulator' },
   { to: '/dashboard', icon: BarChart3, label: 'Dashboard' },
-  { to: '/emergency', icon: Shield, label: 'Emergency' },
+  { to: '/settings', icon: Settings, label: 'Settings' },
   { to: '/guide', icon: BookOpen, label: 'Guide' },
 ];
 

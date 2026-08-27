@@ -239,23 +239,23 @@ export default function Guide() {
               <span className="w-6 h-6 rounded-full bg-amber-500/30 text-amber-300 font-bold text-xs flex items-center justify-center border border-amber-500/40">
                 6
               </span>
-              <h4 className="text-sm font-bold text-white">Customize Contacts & Response Settings</h4>
+              <h4 className="text-sm font-bold text-white">Customize Settings & Biology Dynamics</h4>
             </div>
             <Link
-              to="/emergency"
+              to="/settings"
               className="text-[11px] text-amber-400 hover:text-amber-300 font-medium flex items-center gap-1"
             >
-              Edit Contacts <ArrowRight className="w-3 h-3" />
+              Open Settings <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
           <p className="text-xs text-slate-300">
-            On the Emergency page, all settings are <strong>auto-saved to your browser</strong>:
+            On the <strong>Settings</strong> page, you can configure your preferences (auto-saved):
           </p>
           <ul className="text-xs text-slate-400 space-y-1 pl-4 list-disc">
+            <li><strong>🧬 Connected Body Vitals (Realistic Reaction)</strong>: Toggle whether vitals naturally react to each other based on real human biology.</li>
             <li>Edit Primary & Secondary family/doctor contact names and phone numbers.</li>
             <li>Select emergency hotline presets (🇹🇭 1669, 🇺🇸 911, 🇪🇺 112, 🇬🇧 999, or custom).</li>
-            <li>Adjust auto-call delay (15s, 30s, 45s, 60s).</li>
-            <li>Toggle audible siren sound on/off.</li>
+            <li>Adjust auto-call delay (15s, 30s, 45s, 60s) and toggle audible siren sound.</li>
           </ul>
         </div>
       </section>
@@ -288,12 +288,12 @@ export default function Guide() {
           </div>
 
           <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-700/60">
-            <div className="flex items-center gap-2 font-bold text-red-400 mb-1">
-              <Shield className="w-4 h-4" />
-              <span>Emergency</span>
+            <div className="flex items-center gap-2 font-bold text-violet-400 mb-1">
+              <Settings className="w-4 h-4" />
+              <span>Settings</span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Test emergency alerts, configure 1669/911 hotlines, and customize family contacts.
+              Test emergency alerts, toggle Connected Body Vitals, configure 1669/911, and edit contacts.
             </p>
           </div>
 
