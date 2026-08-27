@@ -32,6 +32,7 @@ import {
   AlertCircle,
   Sparkles,
   CheckCircle2,
+  AlertTriangle,
 } from 'lucide-react';
 
 function CustomLiveTooltip({ active, payload, label, unit, metricName }) {
@@ -124,6 +125,8 @@ export default function Dashboard() {
   const hrChartData = graphMode === 'live' ? liveHrData : sessionHrData;
   const brChartData = graphMode === 'live' ? liveBrData : sessionBrData;
 
+  const hasAbnormalConditions = analysis?.conditions && analysis.conditions.length > 0;
+
   return (
     <div className="space-y-6 animate-fade-in pb-12">
       {/* Page Header */}
@@ -147,6 +150,53 @@ export default function Dashboard() {
           {analysis?.overallAssessment}
         </p>
       </section>
+
+      {/* TOP SECTION: Detected Conditions & Clinical Risks (If anything is abnormal, shown right at the top!) */}
+      {hasAbnormalConditions ? (
+        <section className="space-y-3 animate-fade-in">
+          <h3 className="text-xs font-bold text-red-300 uppercase tracking-wider flex items-center gap-1.5">
+            <AlertTriangle className="w-4 h-4 text-red-400 animate-pulse" />
+            Detected Health Conditions & Clinical Risks
+          </h3>
+
+          <div className="space-y-2.5">
+            {analysis.conditions
+              .sort((a, b) => {
+                const riskOrder = { critical: 0, high: 1, moderate: 2, low: 3 };
+                return (riskOrder[a.risk] ?? 4) - (riskOrder[b.risk] ?? 4);
+              })
+              .map((condition) => (
+                <RiskAlert key={condition.id} condition={condition} />
+              ))}
+          </div>
+        </section>
+      ) : (
+        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-3.5 flex items-center gap-3">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+          <div>
+            <h4 className="text-xs font-bold text-emerald-300">All Metrics Within Healthy Ranges</h4>
+            <p className="text-[10px] text-slate-400">No sleep apnea, arrhythmia, or nocturnal anomalies detected.</p>
+          </div>
+        </div>
+      )}
+
+      {/* TOP SECTION: Personalized Clinical Recommendations & AI Guidance */}
+      {analysis?.tips && analysis.tips.length > 0 && (
+        <section className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-slate-900 border border-amber-500/30 rounded-2xl p-4 space-y-2.5 shadow-md">
+          <h3 className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+            <Zap className="w-4 h-4 text-amber-400" />
+            Personalized Clinical Recommendations
+          </h3>
+          <ul className="space-y-2">
+            {analysis.tips.map((tip, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-xs text-slate-300">
+                <span className="text-amber-400 font-bold mt-0.5">•</span>
+                <span className="leading-relaxed">{tip}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Vital Signs Grid (Embedded animated heart and respiration pulse) */}
       <section>
@@ -216,7 +266,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Bedroom Climate & Environment (Moved Up to Core Monitoring) */}
+      {/* Bedroom Climate & Environment */}
       <section>
         <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
           <Thermometer className="w-3.5 h-3.5 text-emerald-400" />
@@ -401,53 +451,6 @@ export default function Dashboard() {
           </RadarChart>
         </ResponsiveContainer>
       </section>
-
-      {/* Detected Conditions */}
-      <section className="space-y-3">
-        <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-          <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
-          Detected Conditions & Clinical Risks
-        </h3>
-
-        {analysis?.conditions && analysis.conditions.length > 0 ? (
-          <div className="space-y-3">
-            {analysis.conditions
-              .sort((a, b) => {
-                const riskOrder = { critical: 0, high: 1, moderate: 2, low: 3 };
-                return (riskOrder[a.risk] ?? 4) - (riskOrder[b.risk] ?? 4);
-              })
-              .map((condition) => (
-                <RiskAlert key={condition.id} condition={condition} />
-              ))}
-          </div>
-        ) : (
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-            <div>
-              <h4 className="text-xs font-bold text-emerald-300">All Metrics Within Healthy Ranges</h4>
-              <p className="text-[11px] text-slate-400">No sleep apnea, arrhythmia, or nocturnal anomalies detected.</p>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* Clinical Recommendations & AI Tips */}
-      {analysis?.tips && analysis.tips.length > 0 && (
-        <section className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 space-y-3">
-          <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-            <Zap className="w-4 h-4 text-amber-400" />
-            Personalized Clinical Recommendations
-          </h3>
-          <ul className="space-y-2">
-            {analysis.tips.map((tip, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-xs text-slate-300">
-                <span className="text-violet-400 font-bold mt-0.5">•</span>
-                <span className="leading-relaxed">{tip}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
 
       {/* Clinical Disclaimer */}
       <div className="text-center pt-2">
