@@ -199,8 +199,23 @@ export function SleepProvider({ children }) {
     }
   }, [analysis?.emergency?.isEmergency]);
 
-  // Physiological cross-coupling toggle (research-based inter-parameter reflex simulation)
-  const [autoCrossCoupling, setAutoCrossCoupling] = useState(true);
+  // Connected Body Vitals (Realistic Reaction) toggle — ON by default with localStorage persistence
+  const [autoCrossCoupling, setAutoCrossCouplingState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('dreamguard_cross_coupling');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
+  const setAutoCrossCoupling = (val) => {
+    setAutoCrossCouplingState(val);
+    try {
+      localStorage.setItem('dreamguard_cross_coupling', JSON.stringify(val));
+    } catch (e) {}
+  };
+
   const [recentCouplings, setRecentCouplings] = useState([]);
 
   const dismissCouplingAlert = () => setRecentCouplings([]);
