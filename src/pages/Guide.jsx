@@ -11,12 +11,13 @@ import {
   AlertTriangle,
   Zap,
   Phone,
-  Vibrate,
   Clock,
   Sparkles,
   ArrowRight,
   CheckCircle2,
   Volume2,
+  ShieldAlert,
+  ClipboardList,
 } from 'lucide-react';
 
 export default function Guide() {
@@ -34,7 +35,7 @@ export default function Guide() {
           </div>
         </div>
         <p className="text-xs text-slate-300 leading-relaxed mt-2">
-          This web app is a <strong>companion prototype</strong> for DreamGuard — a <strong>contactless bedside health monitor</strong>. It allows you to simulate any sleeper condition and see how the AI analyzes health vitals, calculates sleep quality, and triggers emergency alerts in real time.
+          This web app is a <strong>companion prototype</strong> for DreamGuard — a <strong>contactless bedside health monitor</strong>. It allows you to simulate any sleeper condition and observe how AI analyzes vitals, calculates sleep scores, detects abnormalities, and triggers emergency protocols in real time.
         </p>
       </div>
 
@@ -50,13 +51,13 @@ export default function Guide() {
         </div>
         <div className="text-[11px] text-slate-300 space-y-1.5 leading-relaxed">
           <p>
-            • <strong className="text-white">Every person's body is different:</strong> Optimal heart rates, respiration, and sleep duration vary across individuals based on age, genetics, physical fitness (e.g., an athlete's resting pulse is naturally lower), and existing medical conditions.
+            • <strong className="text-white">Every person's body is different:</strong> Optimal heart rates, respiration, and sleep duration vary across individuals based on age, genetics, physical fitness (e.g., an athlete's resting pulse is naturally lower), and medical history.
           </p>
           <p>
-            • <strong className="text-white">Example Reference Baseline:</strong> The numbers and thresholds shown in this prototype represent a standard adult population reference.
+            • <strong className="text-white">Example Reference Baseline:</strong> The numbers and thresholds shown in this prototype represent standard adult population reference values.
           </p>
           <p>
-            • <strong className="text-white">3-Night Adaptive AI Calibration:</strong> In real-world operation, DreamGuard first performs an automatic <strong>3-night baseline calibration</strong> to learn your personal resting physiology and bedroom environment before generating custom, individualized health advice.
+            • <strong className="text-white">3-Night Adaptive AI Calibration:</strong> In real-world deployment, DreamGuard first performs an automatic <strong>3-night baseline calibration</strong> to learn your personal resting physiology and bedroom environment before generating individualized health advice.
           </p>
         </div>
       </div>
@@ -85,7 +86,7 @@ export default function Guide() {
             </Link>
           </div>
           <p className="text-xs text-slate-300">
-            Tap preset scenario buttons to immediately load clinically realistic sleep profiles:
+            Swipe or click the preset buttons at the top of the Simulator to immediately load clinically realistic sleep profiles:
           </p>
           <div className="grid grid-cols-2 gap-1.5 text-[11px] pt-1">
             <div className="p-2 bg-slate-900/80 rounded-xl border border-slate-700/60">
@@ -114,7 +115,7 @@ export default function Guide() {
               <span className="w-6 h-6 rounded-full bg-cyan-500/30 text-cyan-300 font-bold text-xs flex items-center justify-center border border-cyan-500/40">
                 2
               </span>
-              <h4 className="text-sm font-bold text-white">Adjust the 13 Sensor Sliders</h4>
+              <h4 className="text-sm font-bold text-white">Tap Parameter Cards to Pop Up Sliders</h4>
             </div>
             <Link
               to="/"
@@ -124,13 +125,12 @@ export default function Guide() {
             </Link>
           </div>
           <p className="text-xs text-slate-300">
-            Drag any slider on the Simulator to dynamically customize the sleeper's vitals & bedroom environment:
+            Instead of cluttered screen sliders, parameters are organized as <strong>interactive buttons</strong>:
           </p>
           <ul className="text-xs text-slate-400 space-y-1 pl-4 list-disc">
-            <li><strong>Heart Rate & Breathing</strong>: Change pulse (25–160 bpm) or respiration (0–40 br/min).</li>
-            <li><strong>AHI (Breathing Pauses)</strong>: Test airway interruptions from 0 to 60 pauses/hr.</li>
-            <li><strong>Movement & Snoring</strong>: Adjust actigraphy restlessness and acoustic snoring %.</li>
-            <li><strong>Room Environment</strong>: Change temperature, humidity, noise level, and ambient lux.</li>
+            <li><strong>Pop-Up Slider Window</strong>: Tap any metric card to open its adjustment sheet with <code>[-]</code> and <code>[+]</code> precision buttons.</li>
+            <li><strong>Advance Emergency Warnings</strong>: If you slide near dangerous limits (e.g., HR ≤28 bpm, AHI &gt;50), a red warning banner alerts you inside the popup.</li>
+            <li><strong>Safe Commit on Button Press</strong>: Changes only apply when you click <strong>"Apply & Set Parameter"</strong>, preventing accidental alarm triggers while dragging!</li>
           </ul>
         </div>
 
@@ -140,26 +140,25 @@ export default function Guide() {
             <span className="w-6 h-6 rounded-full bg-emerald-500/30 text-emerald-300 font-bold text-xs flex items-center justify-center border border-emerald-500/40">
               3
             </span>
-            <h4 className="text-sm font-bold text-white">Watch Live Animated Feedback</h4>
+            <h4 className="text-sm font-bold text-white">Watch Embedded Live Pulse Feedback</h4>
           </div>
           <p className="text-xs text-slate-300">
-            As you tweak parameters, the live monitoring indicators update in real time:
+            Real-time biometric animations are embedded directly inside the cards:
           </p>
-          <div className="grid grid-cols-3 gap-2 text-center text-xs pt-1">
-            <div className="p-2.5 bg-slate-900/80 rounded-xl border border-slate-700/60">
-              <Heart className="w-4 h-4 text-red-400 mx-auto mb-1 animate-pulse" />
-              <span className="font-bold text-white">Heart Icon</span>
-              <p className="text-[10px] text-slate-400 mt-0.5">Pulses at your exact BPM rate</p>
+          <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+            <div className="p-2.5 bg-slate-900/80 rounded-xl border border-slate-700/60 flex items-center gap-2.5">
+              <Heart className="w-5 h-5 text-red-400 animate-pulse shrink-0" />
+              <div>
+                <span className="font-bold text-white block">Heart Rate Pulse</span>
+                <p className="text-[10px] text-slate-400">Pulses in sync with exact sleeping BPM</p>
+              </div>
             </div>
-            <div className="p-2.5 bg-slate-900/80 rounded-xl border border-slate-700/60">
-              <Wind className="w-4 h-4 text-cyan-400 mx-auto mb-1" />
-              <span className="font-bold text-white">Breathing Ring</span>
-              <p className="text-[10px] text-slate-400 mt-0.5">Expands/contracts with breaths</p>
-            </div>
-            <div className="p-2.5 bg-slate-900/80 rounded-xl border border-slate-700/60">
-              <Activity className="w-4 h-4 text-amber-400 mx-auto mb-1" />
-              <span className="font-bold text-white">Movement Jitter</span>
-              <p className="text-[10px] text-slate-400 mt-0.5">Shakes when movement is high</p>
+            <div className="p-2.5 bg-slate-900/80 rounded-xl border border-slate-700/60 flex items-center gap-2.5">
+              <Wind className="w-5 h-5 text-cyan-400 shrink-0" />
+              <div>
+                <span className="font-bold text-white block">Breathing Wave</span>
+                <p className="text-[10px] text-slate-400">Expands/contracts with respiratory rate</p>
+              </div>
             </div>
           </div>
         </div>
@@ -171,7 +170,7 @@ export default function Guide() {
               <span className="w-6 h-6 rounded-full bg-indigo-500/30 text-indigo-300 font-bold text-xs flex items-center justify-center border border-indigo-500/40">
                 4
               </span>
-              <h4 className="text-sm font-bold text-white">Explore Dashboard Graphs</h4>
+              <h4 className="text-sm font-bold text-white">Inspect the Health Dashboard</h4>
             </div>
             <Link
               to="/dashboard"
@@ -181,25 +180,25 @@ export default function Guide() {
             </Link>
           </div>
           <p className="text-xs text-slate-300">
-            Open the <strong>Dashboard</strong> tab to inspect your simulated sleep data:
+            Open the <strong>Dashboard</strong> tab to view complete AI analysis and streaming charts:
           </p>
           <div className="space-y-1.5 text-xs">
             <div className="p-2 bg-slate-900/80 rounded-xl border border-slate-700/60">
-              <span className="font-bold text-violet-400">📊 Last 15 Mins Tab:</span>
+              <span className="font-bold text-red-400">🚨 Priority Alerts (Up Top):</span>
               <span className="text-slate-300 text-[11px] ml-1">
-                Real-time streaming telemetry recorded every 15 seconds. Touch or hover to inspect exact data points!
+                If abnormal risks are detected (Sleep Apnea, Bradycardia, Tachycardia), they are highlighted immediately at the top with urgent recommendations.
               </span>
             </div>
             <div className="p-2 bg-slate-900/80 rounded-xl border border-slate-700/60">
-              <span className="font-bold text-cyan-400">🌙 Overnight Trend (8h) Tab:</span>
+              <span className="font-bold text-violet-400">📊 Last 15 Mins vs 8h Overnight Charts:</span>
               <span className="text-slate-300 text-[11px] ml-1">
-                Circadian nocturnal dipping curve across the full 8-hour sleep session (11 PM – 7 AM).
+                Switch between high-resolution rolling telemetry (15-second intervals) and full circadian nocturnal trends.
               </span>
             </div>
             <div className="p-2 bg-slate-900/80 rounded-xl border border-slate-700/60">
-              <span className="font-bold text-emerald-400">🎯 Radar Chart:</span>
+              <span className="font-bold text-emerald-400">📋 Full Health Breakdown (At Bottom):</span>
               <span className="text-slate-300 text-[11px] ml-1">
-                Breaks down your overall Sleep Score (0–100) into 8 sub-scores.
+                Comprehensive evaluation of all parameters and personalized clinical recommendations.
               </span>
             </div>
           </div>
@@ -212,7 +211,7 @@ export default function Guide() {
               <span className="w-6 h-6 rounded-full bg-red-500/30 text-red-300 font-bold text-xs flex items-center justify-center border border-red-500/40">
                 5
               </span>
-              <h4 className="text-sm font-bold text-white">Test Emergency Alarm & Phone Vibration</h4>
+              <h4 className="text-sm font-bold text-white">Test Emergency Alarm & Dispatch Simulation</h4>
             </div>
             <Link
               to="/emergency"
@@ -225,10 +224,10 @@ export default function Guide() {
             Switch to the <strong>Emergency</strong> tab and tap <span className="text-red-400 font-bold">"Test Emergency Alert"</span>:
           </p>
           <ul className="text-xs text-slate-400 space-y-1 pl-4 list-disc">
-            <li><strong>📳 Phone Vibration</strong>: Your phone will pulse in an emergency SOS pattern.</li>
-            <li><strong>🔊 Siren Sound</strong>: Dual-tone audio alarm beeps through your device speakers.</li>
-            <li><strong>⏱️ 30s Countdown</strong>: Counts down to auto-dialing <strong>1669</strong> / <strong>911</strong> with vital telemetry.</li>
-            <li><strong>Cancel / Call Buttons</strong>: Test cancelling the alert or clicking to place a call.</li>
+            <li><strong>🔊 Synthesized Audio Siren</strong>: Dual-tone alarm sound via device speakers (with mute toggle).</li>
+            <li><strong>⏱️ 30s Auto-Dispatch Countdown</strong>: Countdown before simulating first-responder dispatch.</li>
+            <li><strong>🛡️ Simulated Dispatch Screen (Prototype Mode)</strong>: Safe demo showing automated 1669/911 protocols without placing real phone calls.</li>
+            <li><strong>❌ Quick Close Button</strong>: Top-right <code>X</code> button to immediately cancel and return to normal.</li>
           </ul>
         </div>
 
@@ -239,7 +238,7 @@ export default function Guide() {
               <span className="w-6 h-6 rounded-full bg-amber-500/30 text-amber-300 font-bold text-xs flex items-center justify-center border border-amber-500/40">
                 6
               </span>
-              <h4 className="text-sm font-bold text-white">Customize Contacts & Settings</h4>
+              <h4 className="text-sm font-bold text-white">Customize Contacts & Response Settings</h4>
             </div>
             <Link
               to="/emergency"
@@ -249,13 +248,13 @@ export default function Guide() {
             </Link>
           </div>
           <p className="text-xs text-slate-300">
-            On the Emergency page, you can customize everything and changes are <strong>auto-saved to your phone</strong>:
+            On the Emergency page, all settings are <strong>auto-saved to your browser</strong>:
           </p>
           <ul className="text-xs text-slate-400 space-y-1 pl-4 list-disc">
-            <li>Edit Primary & Secondary family contact names and numbers.</li>
-            <li>Select emergency hotline preset (🇹🇭 1669, 🇺🇸 911, 🇪🇺 112, 🇬🇧 999, or custom).</li>
-            <li>Change auto-call delay (15s, 30s, 45s, 60s).</li>
-            <li>Toggle phone vibration and audible siren on/off.</li>
+            <li>Edit Primary & Secondary family/doctor contact names and phone numbers.</li>
+            <li>Select emergency hotline presets (🇹🇭 1669, 🇺🇸 911, 🇪🇺 112, 🇬🇧 999, or custom).</li>
+            <li>Adjust auto-call delay (15s, 30s, 45s, 60s).</li>
+            <li>Toggle audible siren sound on/off.</li>
           </ul>
         </div>
       </section>
@@ -273,7 +272,7 @@ export default function Guide() {
               <span>Simulator</span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Adjust 13 sleeper parameters, choose preset scenarios, and see real-time AI condition diagnosis.
+              Interactive metric cards with pop-up sliders and preset scenario testing.
             </p>
           </div>
 
@@ -283,7 +282,7 @@ export default function Guide() {
               <span>Dashboard</span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Inspect the 15-min live telemetry graphs, 8-hour circadian trends, radar chart, and environmental cards.
+              Sleep Score gauge, priority abnormal alerts, 15m/8h charts, and clinical breakdown.
             </p>
           </div>
 
@@ -293,7 +292,7 @@ export default function Guide() {
               <span>Emergency</span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Test full emergency alerts with phone vibration & sound, edit contact numbers, and configure 1669/911.
+              Test emergency alerts, configure 1669/911 hotlines, and customize family contacts.
             </p>
           </div>
 
@@ -303,7 +302,7 @@ export default function Guide() {
               <span>Guide</span>
             </div>
             <p className="text-[11px] text-slate-400">
-              This interactive manual explaining what everything does and how to test every feature.
+              Interactive user manual with clinical baseline notes and step-by-step testing instructions.
             </p>
           </div>
         </div>
