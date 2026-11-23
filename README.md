@@ -114,7 +114,7 @@ npm run preview
 
 ## Recognition
 
-- **2nd Runner-Up** — *The 1st Health Innovation Science Hackathon* by **Faculty of Allied Health Sciences, Chulalongkorn University (AHS CU)**.
+- **2nd Runner-Up** — *The 1st Health Innovation Science Hackathon* by **Faculty of Allied Health Sciences, Chulalongkorn University (AHS CU)** ([Instagram Post](https://www.instagram.com/p/Dc3ZjmhGTa5/?img_index=6)).
 
 ---
 
