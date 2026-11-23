@@ -8,7 +8,7 @@ import Guide from './pages/Guide';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <SleepProvider>
         <Layout>
           <Routes>

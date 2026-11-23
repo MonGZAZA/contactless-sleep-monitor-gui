@@ -1,8 +1,10 @@
 # DreamGuard
 
-**DreamGuard** is an interactive companion web prototype for a contactless bedside sleep health monitor. It simulates physiological and environmental sleep metrics in real time, evaluates sleep quality and stage architecture, models cardiorespiratory cross-coupling, and demonstrates automated emergency alerting.
+**DreamGuard** is an interactive, **GUI-only** companion web prototype for a contactless bedside sleep health monitor. It simulates physiological and environmental sleep metrics in real time, evaluates sleep quality and stage architecture, models cardiorespiratory cross-coupling, and demonstrates automated emergency alerting.
 
-> **Prototype Disclaimer:** DreamGuard is a simulation and visualization prototype using standard adult population reference thresholds. It is not a medical device and is not intended for clinical diagnosis or treatment.
+> **GUI-Only Prototype Disclaimer:** This project is a **frontend-only GUI simulation** with no backend server, database, or physical radar/sensor hardware integration. All sensor readings, 15-second telemetry streams, emergency dispatches, and alerts are simulated client-side in the browser using standard adult population reference thresholds. It is not a medical device and is not intended for clinical diagnosis or treatment.
+
+**Live Demo (GitHub Pages):** https://mongzaza.github.io/DreamGuard/
 
 ---
 

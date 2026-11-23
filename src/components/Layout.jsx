@@ -16,7 +16,7 @@ export default function Layout({ children }) {
         <div className="max-w-lg mx-auto flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-2">
             <img
-              src="/logo.png"
+              src={`${import.meta.env.BASE_URL}logo.png`}
               alt="DreamGuard"
               className="w-8 h-8 object-contain drop-shadow-[0_0_8px_rgba(139,92,246,0.3)]"
             />
