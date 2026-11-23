@@ -62,14 +62,14 @@ export default function Dashboard() {
 
   // Radar Component Data
   const radarData = [
-    { subject: 'Duration', score: analysis?.subScores?.duration || 85 },
-    { subject: 'Efficiency', score: analysis?.subScores?.efficiency || 88 },
-    { subject: 'Heart Rate', score: analysis?.subScores?.heartRate || 90 },
-    { subject: 'Breathing', score: analysis?.subScores?.breathing || 82 },
-    { subject: 'AHI Airway', score: analysis?.subScores?.ahi || 75 },
-    { subject: 'Movement', score: analysis?.subScores?.movement || 85 },
-    { subject: 'Environment', score: analysis?.subScores?.environment || 92 },
-    { subject: 'Snoring', score: analysis?.subScores?.snoring || 90 },
+    { subject: 'Duration', score: analysis?.subScores?.duration ?? 85 },
+    { subject: 'Efficiency', score: analysis?.subScores?.efficiency ?? 88 },
+    { subject: 'Heart Rate', score: analysis?.subScores?.heartRate ?? 90 },
+    { subject: 'Breathing', score: analysis?.subScores?.breathingRate ?? 82 },
+    { subject: 'AHI Airway', score: analysis?.subScores?.ahi ?? 75 },
+    { subject: 'Movement', score: analysis?.subScores?.movement ?? 85 },
+    { subject: 'Environment', score: analysis?.subScores?.environment ?? 92 },
+    { subject: 'Snoring', score: analysis?.subScores?.snoring ?? 90 },
   ];
 
   // 1. Live 15-Minute Streaming Telemetry Data
