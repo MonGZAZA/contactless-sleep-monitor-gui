@@ -1,0 +1,11 @@
+{
+  "name": "DreamGuard",
+  "short_name": "DreamGuard",
+  "description": "AI-Powered Sleep Health Monitor",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#8b5cf6",
+  "background_color": "#020617",
+  "orientation": "portrait",
+  "icons": []
+}
