@@ -10,7 +10,7 @@
 
 ## Features
 
-- **Sleep Condition Simulator (`/`)**
+- **Sleep Condition Simulator**
   - **5 Clinical Presets:** Healthy Sleeper, Mild Sleep Apnea, Severe Sleep Apnea, Insomnia Pattern, and Emergency Scenario.
   - **13 Adjustable Parameters** across four categories:
     - *Vitals:* Heart Rate (`bpm`), Breathing Rate (`breaths/min`)
