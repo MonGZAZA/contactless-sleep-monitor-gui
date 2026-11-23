@@ -4,7 +4,7 @@
 
 > **GUI-Only Prototype Disclaimer:** This project is a **frontend-only GUI simulation** with no backend server, database, or physical radar/sensor hardware integration. All sensor readings, 15-second telemetry streams, emergency dispatches, and alerts are simulated client-side in the browser using standard adult population reference thresholds. It is not a medical device and is not intended for clinical diagnosis or treatment.
 
-**Live Demo (GitHub Pages):** https://mongzaza.github.io/DreamGuard/
+**Live Demo (GitHub Pages):** https://mongzaza.github.io/contactless-sleep-monitor-gui/
 
 ---
 
