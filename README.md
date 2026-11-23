@@ -33,6 +33,32 @@
 
 ---
 
+## Clinical & Research References
+
+The condition thresholds, sub-score curves, and physiological cross-coupling rules in [src/data/sleepAnalysis.js](src/data/sleepAnalysis.js) and [src/data/physiologicalCoupling.js](src/data/physiologicalCoupling.js) are grounded in the following clinical guidelines and peer-reviewed studies:
+
+- **Sleep Apnea (AHI) & Sleep Staging**
+  - American Academy of Sleep Medicine (AASM) Clinical Practice Guideline for Diagnostic Testing for OSA (2017); Kapur et al., *J Clin Sleep Med*, 2017; Epstein et al., *J Clin Sleep Med*, 2009
+  - AASM Scoring Manual v2.6 (2017) & ICSD-3 Sleep Apnea Criteria (2014)
+  - Peppard et al., *NEJM*, 2000; *Am J Epidemiol*, 2013; Javaheri et al., *JACC*, 2017; Younes, *Am J Respir Crit Care Med*, 2004
+  - Zhao et al., *ICML*, 2017 (mmWave sleep staging)
+- **Cardiac & Respiratory Vitals**
+  - American Heart Association (AHA) Bradycardia & Tachycardia Guidelines; Kusumoto et al., *Circulation*, 2019; Page et al., *Circulation*, 2016; Palatini et al., *Hypertension*, 2006
+  - Somers et al., *Circulation*, 1995; Lanfranchi & Somers, *Circulation*, 2002; Guyton & Hall Medical Physiology
+  - Cretikos et al., *Resuscitation*, 2008; Churpek et al., *J Hosp Med*, 2016; Hodgetts et al., *Resuscitation*, 2002
+- **Insomnia, Sleep Duration & Nocturnal Movement (PLMD)**
+  - DSM-5 (APA, 2013) & ICSD-3 (AASM, 2014); Qaseem et al., *Ann Intern Med*, 2016; Irish et al., *Sleep Med Rev*, 2015
+  - National Sleep Foundation (Hirshkowitz et al., *Sleep Health*, 2015); Watson et al., *Sleep*, 2015; Cappuccio et al., *Sleep*, 2010
+  - AASM Practice Parameters for PLMD (2014); Winkelman, *Sleep*, 1999; Ferri et al., *Sleep Med*, 2016
+- **Snoring & Bedroom Environment**
+  - Deary et al., *Sleep Med Rev*, 2014; Stuck et al., *Sleep & Breathing*, 2015
+  - Okamoto-Mizuno & Mizuno, *Sleep Med Rev*, 2012 & *J Physiol Anthropol*, 2012; Lan et al., *Building and Environment*, 2017; Haskell et al., *Electroencephalogr Clin Neurophysiol*, 1981
+  - EPA Guide to Indoor Air Quality; Arundel et al., *Environ Health Perspect*, 1986
+  - WHO Environmental Noise Guidelines (2018); Basner et al., *Lancet*, 2014 & *Noise & Health*, 2011
+  - Gooley et al., *J Clin Endocrinol Metab*, 2011; Cho et al., *Chronobiol Int*, 2015
+
+---
+
 ## Tech Stack
 
 - **Framework:** React 18 (`react`, `react-dom`) + React Router v6 (`react-router-dom`)
